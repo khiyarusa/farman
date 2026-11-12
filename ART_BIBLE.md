@@ -115,7 +115,7 @@ Weather presets (`WorldScene.setWeather`):
 |---|---|---|
 | Clear colour | `#c9d6dd` | `#5d666b` |
 | Fog | `#c2cfd5`, 0.00045 | `#8e9aa0`, 0.0035 |
-| Sky texture | `sky-day.png` | `sky-rain.png` |
+| Sky texture | `sky-day.png` | `sky-day.png` (not swapped; `sky-rain.png` is generated but unused) |
 | Wetness (grip) | 0 | 1 on asphalt, 0.4 off-road |
 
 Direction: an overcast-but-bright Caspian day. Sun is high and slightly behind-left of the

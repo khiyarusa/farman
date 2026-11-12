@@ -426,7 +426,7 @@ export class VehicleSim {
       this.wheelSlip[i] = clamp(slip, -1.2, 1.2);
       const limit = mu * fz;
 
-      const fx = fz > 0 ? tireLongitudinalForce(this.wheelSlip[i] as number, mu, fz, Math.max(0.03, p.tires.peakSlipRatio)) : 0;
+      let fx = fz > 0 ? tireLongitudinalForce(this.wheelSlip[i] as number, mu, fz, Math.max(0.03, p.tires.peakSlipRatio)) : 0;
       if (limit > 0 && Math.abs(fx) > limit) {
         wheelspin = Math.max(wheelspin, Math.abs(fx) / Math.max(1, limit) - 1);
         fx = Math.sign(fx) * limit;

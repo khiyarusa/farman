@@ -30,14 +30,14 @@ Profile `dataConfidence: 'estimated'`.
 
 | Parameter | Profile value | Research value | Status | Note |
 |---|---|---|---|---|
-| Length / width / height | 3.942 / 1.605 / 1.441 m | 3.935 / 1.605 / 1.455 m | V→T | Height lowered 14 mm to match the generated body |
+| Length / width / height | 3.942 / 1.605 / 1.441 m | 3.935 / 1.605 / 1.455 m | V→T | Profile differs by 7 / 0 / 14 mm; the GLB is built from the profile |
 | Wheelbase | 2.342 m | 2.345 m | V→T | 3 mm |
-| Track F / R | 1.390 / 1.350 m | 1.405 / 1.385 m | V→T | Narrowed 15 / 35 mm, presumably for the model's arches |
+| Track F / R | 1.390 / 1.350 m | 1.405 / 1.385 m | V→T | Profile is 15 / 35 mm narrower |
 | Tyre | 165/65 R13 | 165/65 R13 (or 175/60 R13) | V | |
 | Tyre radius | 0.286 m | 0.272 m unloaded, ≈0.264 m loaded | E | Profile uses a larger rolling radius; affects gearing and ride height |
 | Mass | 895 kg | 915 kg net; 990 kg with driver | V→T | 20 kg below kerb, 95 kg below test mass |
 | Front weight share | 0.61 | ≈0.62 static (E) | E | |
-| CoM height | 0.52 m | 0.55 m (E, 0.38 × height) | E | Lowered for stability |
+| CoM height | 0.52 m | 0.55 m (E, 0.38 × height) | E | Below the research estimate; tuned |
 | Yaw inertia | 1250 kg·m² | not published | E | Tuned; the fallback formula would give a different value |
 | Engine displacement | 1.323 L | 1323 cc | V | |
 | Idle / redline / limiter | 850 / 6000 / 6400 rpm | 850±50 / 6000 (E) / none | V/E | Limiter added |
@@ -60,10 +60,10 @@ Profile `dataConfidence: 'estimated'`.
 `[900:62, 1500:78, 2200:90, 3000:100, 3800:96, 4600:88, 5400:76, 6000:64]` (rpm:N·m).
 
 Research anchors were 103.3 N·m @ 2800 and 81 N·m @ 5500 (63 hp). The profile curve peaks
-earlier and slightly lower; at 6000 rpm it still makes 64 N·m, which keeps the engine alive
-against the limiter. Implied peak power from this curve is ≈43 kW (58 hp) at 5400 rpm, i.e.
-**8 % below the published 63 hp**. The garage computes and displays horsepower from these
-points (`peakPowerHp` in `src/ui/screens/garage.ts`), so the Pride shows ~58 hp, not 63.
+earlier and slightly lower and still makes 64 N·m at 6000 rpm, so the engine does not fall
+flat against the limiter. Implied peak power from this curve is ≈43 kW (58 hp) at 5400 rpm,
+i.e. **8 % below the published 63 hp**. The garage computes and displays horsepower from
+these points (`peakPowerHp` in `src/ui/screens/garage.ts`), so the Pride shows ~58 hp, not 63.
 
 ## 3. Toyota Corolla 2.0 CVT (`src/vehicles/profiles/corollaE210.ts`)
 
@@ -98,10 +98,10 @@ Profile `dataConfidence: 'estimated'`.
 `[800:140, 1500:170, 2500:190, 4000:202, 4400:205, 5200:197, 6000:180, 6600:160, 7000:140]`.
 
 Research anchors: 205 N·m @ 4400 and 182 N·m @ 6600 (126 kW / 169 hp). The profile keeps
-making torque to 7000 rpm, so implied peak power is ≈113 kW (152 hp) at 6000 rpm —
-**10 % below the published 169 hp**. The garage therefore shows ~152 hp. The shape is tuned
-so the CVT holds a steady 5000–6000 rpm under full throttle, which is the characteristic
-Corolla behaviour, at the cost of the top-end number.
+torque high to 7000 rpm, so implied peak power is ≈113 kW (152 hp) at 6000 rpm —
+**10 % below the published 169 hp**. The garage therefore shows ~152 hp. Combined with the
+CVT targets (1450–5200 rpm), this produces the sustained-rpm rubber-band feel rather than a
+peak-power figure.
 
 ## 4. BMW 320i G20 (`src/vehicles/profiles/bmw320i.ts`)
 
@@ -115,7 +115,7 @@ Profile `dataConfidence: 'estimated'`.
 | Track F / R | 1.587 / 1.604 m | 1.589 / 1.604 m | V→T | Front 2 mm |
 | Tyre | 225/45 R18 | 225/45 R18 (M Sport) | V | |
 | Tyre radius | 0.330 m | 0.330 m unloaded | V | |
-| Mass | 1545 kg | 1450 kg DIN, 1525 kg EU with driver | V→T | +20 kg for stability |
+| Mass | 1545 kg | 1450 kg DIN, 1525 kg EU with driver | V→T | 20 kg above the EU figure |
 | Front weight share | 0.51 | 50:50 (V) | V→T | 1 % forward |
 | CoM height | 0.53 m | 0.52 m (E, 0.36 × height) | E | |
 | Yaw inertia | 2450 kg·m² | not published | E | |
@@ -136,9 +136,8 @@ Profile `dataConfidence: 'estimated'`.
 
 Research anchors: 300 N·m flat 1350–4000; 258 N·m @ 5000 and 198 N·m @ 6500 (135 kW / 184 hp).
 The profile's top end is stronger: 225 N·m at 6500 gives ≈153 kW (205 hp) at 6500 rpm —
-**11 % above the published 184 hp**. That is deliberate: the extra top-end keeps the car
-pulling to the limiter in 3rd/4th and makes the RWD chassis feel worth the 300 N·m. It is
-not a data error to be "fixed" without re-tuning.
+**11 % above the published 184 hp**. That is a tuning choice, not a data transcription: it
+keeps the car pulling to the limiter in 3rd/4th.
 
 ## 5. What is estimated, explicitly
 
@@ -169,16 +168,17 @@ These categories are engineering estimates in all three cars, not measurements:
 ## 6. What "tuned for playability" means here
 
 After the reference values were entered, the cars were adjusted against driving feel, not
-against a proving ground:
+against a proving ground. The following are design rationales for the shipped values, not
+measurements:
 
-- The Pride's gearing was lengthened so 1st gear is usable on the hill-start mission without
-  constant clutch slip, and its mass lowered so it does not feel like a truck.
-- The Corolla's CVT was given a wider ratio spread and no launch gear so the rubber-band
-  effect reads clearly on a touch screen; its final drive was shortened to compensate.
-- The BMW's final drive was shortened and top-end torque raised so the rear axle can be
+- The Pride's gearing is longer than the research set and its mass is below kerb, which makes
+  1st gear harder to stall on the hill-start mission and keeps the car from feeling inert.
+- The Corolla runs a wider belt spread with no launch gear and a shorter final drive, which
+  makes the rubber-band effect legible on a touch screen.
+- The BMW uses a shorter final drive and stronger top-end torque, which lets the rear axle be
   provoked at low speed while still pulling at the limiter.
-- Grip levels were set so the Pride slides early, the Corolla understeers first, and the BMW
-  oversteers on throttle — the three handling characters the design pillars promise.
+- Grip levels are staggered so the Pride slides early, the Corolla understeers first, and the
+  BMW oversteers on throttle — the three handling characters the pillars promise.
 
 Consequence: the profiles are a **gameplay dataset**, not a validation dataset. They should
 not be cited as accurate reproductions of the real cars, and the garage horsepower figures
@@ -193,7 +193,7 @@ These are the quickest way to spot a broken edit (values computed from the profi
 | Power / mass | 58 hp / 895 kg = 65 hp/t | 152 hp / 1360 kg = 112 hp/t | 205 hp / 1545 kg = 133 hp/t |
 | 1st gear overall | 3.667 × 4.06 = 14.89 | 2.48 × 4.09 = 10.14 (belt low) | 5.000 × 3.077 = 15.39 |
 | Top gear overall | 0.743 × 4.06 = 3.02 | 0.40 × 4.09 = 1.64 | 0.640 × 3.077 = 1.97 |
-| Engine speed at 100 km/h, top | ≈2690 rpm | ≈1470 rpm | ≈1560 rpm |
+| Engine speed at 100 km/h, top | ≈2800 rpm | ≈1370 rpm | ≈1580 rpm |
 | Driven axle share of mass | 61 % | 60 % | 49 % |
 | Character | short gearing, low grip, no aids | tall CVT, traction-limited launch | flat 300 N·m, RWD, DSC |
 

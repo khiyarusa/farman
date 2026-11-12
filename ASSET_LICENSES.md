@@ -80,7 +80,10 @@ Licence values read from each installed package's `package.json`.
 | `jsdom` | 31.0.0 | MIT |
 | `vazirmatn` (dev dependency) | 33.0.3 | OFL-1.1 |
 
-No dependency is GPL/AGPL. Babylon.js and Rapier are Apache-2.0, which requires preserving
+No dependency is known to be GPL/AGPL. Only the direct dependencies above were checked;
+the transitive tree has not been audited, and a release should run a full licence scan
+(e.g. `license-checker`) before distribution. Babylon.js and Rapier are Apache-2.0, which
+requires preserving
 their `NOTICE`/licence text in a distribution; include their licence files in the release
 package or an in-app notices screen. Neither library is modified in this repository.
 

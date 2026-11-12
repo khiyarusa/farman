@@ -6,9 +6,9 @@ requires breaking one, change this file in the same commit and say why.
 
 ## 1. Non-negotiable invariants
 
-1. **TypeScript strict stays on.** `tsconfig.json` has `strict`, `noUncheckedIndexedAccess`,
-   `noUnusedLocals`, `noUnusedParameters`, `noImplicitOverride`-level rigour via the strict
-   family. Do not weaken compiler options to make an error disappear.
+1. **TypeScript strict stays on.** `tsconfig.json` enables `strict`, `noUncheckedIndexedAccess`,
+   `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch` and `exactOptionalPropertyTypes: false`.
+   Do not weaken compiler options to make an error disappear.
 2. **No `any` in new code.** Use `unknown` + a type guard, a discriminated union, or a
    precise interface. `@typescript-eslint/no-explicit-any` is a warning today; treat it as an
    error. Do not silence it with `eslint-disable` unless the value is genuinely opaque
@@ -22,7 +22,8 @@ requires breaking one, change this file in the same commit and say why.
 5. **No allocations in hot loops.** `VehicleSim.step`, `TrafficSystem.step`, `Engine.update`
    and `Transmission.step` run 60×/s per entity. Reuse arrays, avoid object literals per
    wheel per step, avoid `map`/`filter`/spread in those paths. New per-step vectors are a
-   review blocker.
+   review blocker. (The existing telemetry rebuild allocates once per step; that is a known
+   cost, not a licence to add more.)
 6. **Persian text only through the dictionary.** UI strings come from `src/ui/i18n.ts`
    (`FA.*`); mission titles/descriptions live in `src/missions/definitions.ts`; road names
    live in `world.json`. Never inline a Persian string in a screen or component.

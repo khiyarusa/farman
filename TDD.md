@@ -21,11 +21,9 @@ relative to the repository root. Numbers below were read from source, not estima
 |---|---|---|
 | `src/core/config.ts` | Immutable constants: physics, render, economy, world | Single source for tuning |
 | `src/core/loop.ts` | `FixedStepLoop` accumulator | Returns step count, exposes `alpha` |
-| `src/core/math.ts` | clamp/lerp/smoothstep/damp/monotone cubic | Allocation-free helpers |
-| `src/core/rng.ts` | Seeded xorshift-style RNG | Used by traffic placement |
-| `src/core/events.ts` | Tiny typed emitter | Not used by the drive loop |
+| `src/core/math.ts`, `rng.ts`, `events.ts` | Math helpers, seeded RNG, typed emitter | RNG used by traffic; emitter unused in the drive loop |
 | `src/physics/world.ts` | Rapier world wrapper: heightfield, trimesh, boxes, body creation | Also holds unused vehicle-controller plumbing |
-| `src/vehicles/profile.ts` | `VehicleProfile` schema + `validateProfile()` | 16 structural checks |
+| `src/vehicles/profile.ts` | `VehicleProfile` schema + `validateProfile()` | 17 range/structure checks plus a monotonic-curve check |
 | `src/vehicles/profiles/*.ts` | Three car data files + registry | `index.ts` exports `VEHICLE_PROFILES` |
 | `src/vehicles/engine.ts` | rpm state, torque curve, friction, limiter, stall, thermal, fuel | No knowledge of gears |
 | `src/vehicles/transmission.ts` | Manual clutch, torque converter, CVT, auto shift schedule | Returns reaction torque |
@@ -39,14 +37,12 @@ relative to the repository root. Numbers below were read from source, not estima
 | `src/rendering/worldScene.ts` | World load, road index, surface provider, colliders | `roadUnder`, `groundHeightAt` |
 | `src/rendering/environment.ts` | Sky dome, procedural env cube, sun, shadows, fog, ACES | PBR reflections without remote assets |
 | `src/rendering/vehicleView.ts` | GLB binding, paint/rim materials, wheel animation | Proxy mesh fallback |
-| `src/rendering/cameraRig.ts` | Chase/close/hood camera; studio orbit camera | `damp()` smoothing |
-| `src/rendering/studio.ts` | Garage scene: floor, backdrop, three-point light | Separate from world |
+| `src/rendering/cameraRig.ts`, `studio.ts` | Chase/close/hood camera; garage orbit camera and showroom | `damp()` smoothing |
 | `src/ui/design.css` | Design tokens, RTL layout, HUD, controls | 1,231 lines |
 | `src/ui/i18n.ts` | All Persian UI strings | Single dictionary |
 | `src/ui/format.ts` | Persian digits, grouping, money, time, units | Digit mode is global |
 | `src/ui/screens/*` | Menu, garage, missions, settings, HUD, overlays | DOM only |
-| `src/save/schema.ts` | Types, defaults, `validateSave()` | Version 1 |
-| `src/save/storage.ts` | Debounced read/write, backup, memory fallback | 400 ms debounce |
+| `src/save/schema.ts`, `storage.ts` | Types, defaults, validation, debounced storage, backup, memory fallback | Version 1, 400 ms debounce |
 | `src/input/controls.ts` | Touch wheel/buttons/gyro, pedals, gearbox, handbrake | Pointer capture per control |
 | `src/input/keyboard.ts` | Keyboard fallback | Left-steer defect, §13 |
 | `src/app.ts` | Orchestrator: screens, drive lifecycle, economy, settings | Owns the loop |
@@ -221,18 +217,14 @@ lights, no despawn/spawn culling, and every agent is updated every physics step.
 `src/save/schema.ts`, version `1`, key `farman.save.v1`, backup key `farman.save.backup`.
 
 ```
-SaveData {
-  schemaVersion: 1, createdAt, updatedAt,
-  settings: { graphics, renderScale, masterVolume, engineVolume, ambienceVolume,
-              uiVolume, steeringMode, steeringSensitivity, controlSize, controlOpacity,
-              leftHanded, uiScale, assists{abs,tcs,esc,autoClutch,stability},
-              showTelemetry, digits, tutorialHints },
-  player: { credits, xp, level, selectedVehicleId, unlockedVehicleIds[], totalKm,
-            seenTutorial{manual,automatic} },
-  vehicles: { [id]: { paintId, rimId, tireSet, fuel, tireWear[4], engineWear,
-                      bodyDamage, odometerKm, sinceServiceKm } },
-  missions: { [id]: { completed, attempts, bestScore, bestTimeSec } }
-}
+SaveData { schemaVersion, createdAt, updatedAt,
+  settings{graphics, renderScale, master/engine/ambience/uiVolume, steeringMode,
+    steeringSensitivity, controlSize, controlOpacity, leftHanded, uiScale,
+    assists{abs,tcs,esc,autoClutch,stability}, showTelemetry, digits, tutorialHints},
+  player{credits, xp, level, selectedVehicleId, unlockedVehicleIds, totalKm, seenTutorial},
+  vehicles{id → paintId, rimId, tireSet, fuel, tireWear[4], engineWear, bodyDamage,
+    odometerKm, sinceServiceKm},
+  missions{id → completed, attempts, bestScore, bestTimeSec} }
 ```
 
 Validation is repair-oriented: every number is clamped to a documented range, every enum is
@@ -286,7 +278,8 @@ points at `tools/qa/capture.mjs`, also missing; `tools/qa/smoke.mjs` is the work
 script.
 
 Shipped asset weight (uncompressed, no Draco/meshopt): roads 5.8 MB, terrain 4.7 MB,
-vegetation 2.7 MB, props 2.5 MB, vehicles 3 × ~0.4–0.8 MB, textures ~4 MB, fonts ~1 MB.
+vegetation 2.7 MB, props 2.5 MB (15.6 MB of world data), vehicles 2.6 MB total, textures
+1.2 MB, fonts 0.5 MB — roughly 20 MB of assets.
 
 ## 12. Performance budget and known limits
 
@@ -295,7 +288,7 @@ vegetation 2.7 MB, props 2.5 MB, vehicles 3 × ~0.4–0.8 MB, textures ~4 MB, fo
 | Device pixel ratio cap | 1.0 | 1.25 | 1.6 |
 | Render scale | 0.72 | 0.90 | 1.00 |
 | Shadow map | 512 | 1024 | 2048 |
-| Shadow distance | 32 m | 55 m | 80 m |
+| Shadow frustum | fixed: `shadowMaxZ = 260`, light follows the car | same | same |
 | Solver iterations | 6 (all profiles) | | |
 
 Other fixed choices: far clip 1400 m, FOV 0.92, EXP2 fog, one shadow-casting directional
@@ -303,26 +296,20 @@ light, ACES tone mapping (exposure 0.92, contrast 1.14), no post-processing pipe
 SSAO, no SSR, no bloom.
 
 Not measured: frame time on a real Android device, draw calls, GPU memory, thermal
-behaviour. There is no instrumentation hook in the build besides `window.__farman.debugState`
-(telemetry, body mass, sleeping state, wheel contact/Fz). Treat all performance claims as
-unverified until measured on target hardware.
+behaviour. The only instrumentation is `window.__farman.debugState` (telemetry, body mass,
+sleeping state, wheel contact/Fz); treat performance claims as unverified until measured.
 
 ## 13. Known defects and technical debt
 
-1. **Keyboard left steering is dead.** `moveTo()` in `src/input/keyboard.ts` clamps to
-   `0..1`, so negative steer is forced to 0. Right steer works.
-2. **No render interpolation** despite `alpha` (see §3); wheel rotation assumes 60 fps.
-3. **Stale physics comments/API** in `src/physics/world.ts` (§4).
-4. **No tests.** `vite.config.ts` includes `tests/**/*.test.ts`; the directory does not
-   exist and `npm test` exits 1 with "No test files found".
-5. **Lint is red.** `eslint src` reports 2 errors (`no-empty-object-type` in
-   `src/ui/ui.ts:72`, `no-irregular-whitespace` in `src/vehicles/vehicle.ts:352`). Whole-repo
-   lint reports 74 errors, mostly `no-undef` for Node globals in `tools/qa/*.mjs`.
-6. **No favicon.** `index.html` references `./assets/brand/icon-192.png`; `public/assets/brand`
-   does not exist.
-7. **Two sources for starting credits** (`GAME.startingCredits` and a literal in
-   `createDefaultSave`); `GAME.missionBaseReward` is unused.
-8. **Unused physics constants**: `PHYSICS.linearDamping` / `angularDamping` are overridden
-   per body; `RENDER.maxDeltaTime` is unused (`App.frame` uses 0.1 directly).
-9. **Drive state is not written back** to the save (fuel, wear, damage, odometer) — see
-   `TECHNICAL_IMPLEMENTATION_PLAN.md` P0-3.
+The full defect table with severity lives in `TECHNICAL_IMPLEMENTATION_PLAN.md` §5. The
+items that are specifically architectural:
+
+1. **No render interpolation** despite `alpha` (see §3); wheel rotation assumes 60 fps.
+2. **Stale physics comments/API** in `src/physics/world.ts`: it still describes and exports a
+   Rapier vehicle-controller path that nothing calls (§4).
+3. **Unused constants/hooks**: `PHYSICS.linearDamping`/`angularDamping` are overridden per
+   body; `RENDER.maxDeltaTime` is unused (`App.frame` uses 0.1); `RENDER.shadowDistance` and
+   `EnvironmentHandles.setQuality()` are never called, so shadows are sized once at
+   construction and the frustum stays fixed.
+4. **Drive state is not written back** to the save (fuel, wear, damage, odometer) — the
+   simulation and the economy are currently disconnected.

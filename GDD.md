@@ -83,11 +83,11 @@ optional side content, never a gate.
 | Traffic | 10–24 lane-following agents with kinematic colliders | `src/traffic/traffic.ts` |
 | Missions | 7 missions with per-kind objectives and scoring | `src/missions/` |
 | Economy | credits, refuel, repair, full service, paint, rims | `src/app.ts`, `src/core/config.ts` |
-| Weather | dry and rain states (grip + fog + sky tint) | `src/rendering/worldScene.ts` |
+| Weather | dry and rain states (grip + fog + clear colour) | `src/rendering/worldScene.ts` |
 | Camera | chase, close, hood | `src/rendering/cameraRig.ts` |
 | HUD | speed, tach, gear, fuel, coolant, ABS/TCS/ESC flags, minimap, objective | `src/ui/screens/hud.ts` |
 | Save | versioned localStorage save with validation, backup, debounce | `src/save/` |
-| Settings | quality, render scale, 4 volumes, steering mode, sensitivity, control size/opacity, handedness, UI scale, assists, digits, telemetry, tutorial hints | `src/ui/screens/settings.ts` |
+| Settings | quality, render scale, steering mode, handedness, UI scale, assists, digits, telemetry, tutorial hints; 4 volumes persist (no audio yet). Sensitivity/size/opacity are stored but not applied — see §14 | `src/ui/screens/settings.ts` |
 | Onboarding | one-shot manual/automatic tutorial overlay, help screen | `src/ui/screens/overlays.ts` |
 
 ### 5.2 Explicitly NOT implemented in V1
@@ -174,7 +174,7 @@ score           = round(clamp(raw, 0.05, 1)·100 − penalty)
 reward          = round(mission.reward · score / 100)     // 0 on failure
 ```
 
-A collision is counted when `bodyDamage` rises by more than 0.004 in one frame; each adds
+A collision is counted when `bodyDamage` rises by more than 0.004 in one physics step; each adds
 12 penalty points. A failed run scores `max(4, 40 − 8·collisions − 0.6·penalty)` and pays
 nothing. `elapsed` has no par for `hill-start` and `braking`, so par falls back to the
 elapsed time (time factor 1 for a clean finish).
@@ -185,7 +185,7 @@ elapsed time (time factor 1 for a clean finish).
 |---|---|---|
 | Starting credits | 42,000,000 تومان | `createDefaultSave()` (duplicates `GAME.startingCredits`) |
 | Fuel | 3,000 تومان per litre; tank 37 / 47 / 59 L | `GAME.fuelPricePerLitre` |
-| Body repair | 900,000 per damage percent (0–100 %) | `GAME.repairCostPerPercent` |
+| Repair | 900,000 × damage percent; sets body damage 0, engine wear −0.35, tyre wear −0.5 | `GAME.repairCostPerPercent` |
 | Full service | 2,500,000: refuel + body repair + engine wear −0.35 + tyre wear −0.5 + service counter reset | `GAME.serviceCost` |
 | Paint | 400,000 per change (charged even for the current colour) | `App.setPaint` |
 | Rims | 900,000 per change | `App.setRim` |
@@ -202,7 +202,8 @@ Only two states, chosen per drive (`WorldScene.setWeather`, called with the miss
 
 | | Dry | Rain |
 |---|---|---|
-| Sky | `sky-day.png`, clear colour `#c9d6dd` | `sky-rain.png`, clear colour `#5d666b` |
+| Sky dome | `sky-day.png` | `sky-day.png` — unchanged; `sky-rain.png` exists but is not swapped in |
+| Clear colour | `#c9d6dd` | `#5d666b` |
 | Fog | EXP2, density 0.00045, colour `#c2cfd5` | EXP2, density 0.0035, colour `#8e9aa0` |
 | Asphalt grip | `tires.muDry` (0.90 / 0.94 / 1.00) | `tires.muWet` (0.62 / 0.66 / 0.70) blended by `surface.wet` |
 | Off-road wetness | 0.4 × wet | 0.4 × 1 |
