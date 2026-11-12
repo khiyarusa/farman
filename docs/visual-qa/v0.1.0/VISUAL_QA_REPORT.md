@@ -30,6 +30,7 @@ Galaxy A23 performance target is *not* verified (see §4).
 | 14 | `14-mission-objective.png` | Parking mission objective |
 | 15 | `15-wheel-contact.png` | Low camera on the wheel/road contact |
 | 16 | `16-mobile-2400x1080.png` | Landscape phone aspect ratio |
+| 17 | `17-mission-result.png` | Parking mission result overlay (score ۸۲) |
 
 ---
 
