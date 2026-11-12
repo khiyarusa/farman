@@ -43,7 +43,7 @@ visible in the repository.
 | Save: versioned schema, validation/repair, backup, 400 ms debounce, memory fallback | `src/save/*` | `farman.save.v1`, `farman.save.backup` |
 | Persian RTL UI, Vazirmatn, Persian digits and separators | `src/ui/design.css`, `src/ui/i18n.ts`, `src/ui/format.ts` | Global digit mode; `.ltr` isolation for telemetry |
 | Three cameras (chase/close/hood) with damping and speed FOV | `src/rendering/cameraRig.ts` | No cockpit |
-| Studio/garage scene with turntable, floor reflection, three-point light | `src/rendering/studio.ts` | Separate scene, <1 s to menu |
+| Studio/garage scene with turntable, floor reflection, three-point light | `src/rendering/studio.ts` | Separate scene; the menu never waits for the world to load |
 | Vehicle rendering with GLB binding, proxy fallback, wheel animation, brake/reverse/headlight emissive | `src/rendering/vehicleView.ts` | Wheel nodes `wheel_fl/fr/rl/rr`; proxy built if GLB fails |
 | HUD: speed, tach, gear, fuel, coolant, flags, objective, minimap, telemetry block | `src/ui/screens/hud.ts` | Minimap redraw ~8 Hz |
 | Tutorials (manual/automatic) and help screen | `src/ui/screens/overlays.ts` | One-shot per save flag |
@@ -58,7 +58,7 @@ visible in the repository.
 | Settings | Graphics, render scale, UI scale, digits, assists, steering mode and handedness take effect | `steeringSensitivity`, `controlSize`, `controlOpacity` are persisted and never applied; volume sliders have no consumer | `src/ui/screens/settings.ts`, `src/ui/design.css` |
 | Audio | `profile.audio` metadata exists (firing Hz, timbre, gains); four volume settings persist | No audio module, no playback, no files | — |
 | Damage | Scalar `bodyDamage` rises on impacts, affects nothing visually and costs money to repair | No deformation, no panel/glass damage, no performance penalty | `src/vehicles/vehicle.ts` |
-| Weather | Dry/rain presets change fog, sky and grip | Rain is only reachable through the `wet` mission; no free-drive weather selector, no rain VFX, no wipers | `src/app.ts` `startDrive` |
+| Weather | Dry/rain presets change fog, clear colour and grip | Rain is only reachable through the `wet` mission; no free-drive weather selector, no rain VFX, no wipers | `src/app.ts` `startDrive` |
 | Traffic | Lane following, headway, player braking, collisions | No traffic lights, stop signs, lane changes or priority; cars wrap around at road ends; O(n²) headway scan | `src/traffic/traffic.ts` |
 | Surfaces | Asphalt/tunnel and dirt drive different grip; wetness blends mu | `gravel`, `sand`, `grass` exist in the type and grip table but are never returned by the world | `src/world/surface.ts`, `src/rendering/worldScene.ts` |
 | Mission objectives | All seven evaluate and score correctly | Objectives are geometric distances along the spawn heading, not authored trigger volumes; retuning a spawn silently moves the target | `src/missions/manager.ts` |
@@ -92,7 +92,7 @@ visible in the repository.
 | D4 | Medium | `eslint src` fails on 2 errors | `src/ui/ui.ts:72` empty interface; `src/vehicles/vehicle.ts:352` irregular whitespace |
 | D5 | Medium | Repo-wide lint fails on 74 errors | `tools/qa/*.mjs` use `process`/`window`/`console` with no Node env configured in `eslint.config.js` |
 | D6 | Medium | `npm run assets` and `npm run shots` point at missing files | `tools/assetgen/build_all.py`, `tools/qa/capture.mjs` do not exist |
-| D7 | Medium | No favicon / launcher icon | `index.html` → `./assets/brand/icon-192.png`; directory absent |
+| D7 | Medium | No brand favicon or launcher icon (Capacitor defaults are used) | `index.html` → `./assets/brand/icon-192.png`; directory absent; `android/app/src/main/res/mipmap-*` are stock |
 | D8 | Medium | Control size/opacity/sensitivity settings inert | Values only stored in `src/save/schema.ts`; no CSS/consumer |
 | D9 | Low | No render interpolation; wheel spin assumes 60 fps | `alpha` unused; `VehicleView.update` uses `1/60` |
 | D10 | Low | Stale comment and unused API in physics wrapper | `src/physics/world.ts` header + `registerVehicle`/`updateVehicles` with no callers |

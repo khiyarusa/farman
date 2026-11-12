@@ -189,8 +189,8 @@ and works in Node/jsdom), step at 1/60 for a fixed number of steps.
 |---|---|---|
 | Launch | Pride, 1st, clutch released over 1 s, full throttle | moves forward; 0–50 km/h in 5–10 s; no NaN in telemetry |
 | Stall | Pride, 1st, clutch dumped at idle | engine stalls (or bogs), auto-restart within 1.5 s |
-| Braking dry | 80 km/h, full brake, straight | stops in 25–45 m; ABS flag active at some point |
-| Braking wet | same with `wet: 1` | stopping distance ≥ 1.3 × dry |
+| Braking dry | Corolla, 80 km/h, full brake, straight | stops in 25–45 m; ABS flag active at some point |
+| Braking wet | Corolla, same with `wet: 1` | stopping distance ≥ 1.3 × dry |
 | Hill start | 10 % slope via a custom `SurfaceProvider` | rollback < 2.5 m with handbrake, then climbs |
 | Coast | 50 km/h, neutral | decelerates monotonically; no creep after stop with brake |
 | Steering | 60 km/h, 50 % steer | yaw rate positive, lateral G > 0.2, no roll (body roll not simulated) |

@@ -85,7 +85,7 @@ Record speed, rpm, gear and any warning flags from the HUD or `window.__farman.d
 | Car | What must happen | Fail if |
 |---|---|---|
 | Pride 131 (manual, FWD) | Clutch travels; shift up/down only with clutch ≥ 55 %; stall is possible and self-recovers after 1.2 s; reverse refused above 1.4 m/s; no ABS/TCS/ESC flags | It moves in gear with the clutch fully out at rest without stalling, shifts without the clutch, or cannot recover from a stall |
-| Corolla 2.0 (CVT, FWD) | Selector P→R→N→D; no discrete shift pause; ratio changes continuously; ABS/TCS/ESC/hill-start available | It behaves like a stepped automatic, or the ratio leaves 2.48–0.4 |
+| Corolla 2.0 (CVT, FWD) | Selector P→R→N→D; no discrete shift pause; ratio changes continuously; ABS/TCS/ESC available | It behaves like a stepped automatic, or the ratio leaves 2.48–0.4 |
 | BMW 320i (8AT, RWD) | Selector cycles; eight forward ratios; converter stall and lock-up; kickdown; rear axle is the driven one | It drives the front axle, shifts like a CVT, or the converter never locks |
 
 ### 3.2 Manual vs automatic distinctness

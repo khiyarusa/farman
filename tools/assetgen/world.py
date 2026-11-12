@@ -228,6 +228,17 @@ def sample_height(heights: np.ndarray, x: float, z: float) -> float:
 # Meshes
 # --------------------------------------------------------------------------
 
+
+def ensure_up(part):
+    """Flips triangle winding so the surface normal points up (+Y)."""
+    pos, nrm, uv, idx = part
+    if len(nrm) and float(nrm[:, 1].mean()) < 0:
+        tri = idx.reshape(-1, 3)[:, [0, 2, 1]].reshape(-1)
+        nrm = nrm * -1.0
+        return (pos, nrm.astype(np.float32), uv, tri.astype(np.uint32))
+    return part
+
+
 def terrain_meshes(heights: np.ndarray):
     n = TERRAIN_RES
     xs = np.linspace(-SIZE / 2, SIZE / 2, n)
@@ -281,7 +292,7 @@ def terrain_meshes(heights: np.ndarray):
         ln = np.linalg.norm(normals, axis=1, keepdims=True)
         ln[ln < 1e-9] = 1
         normals = normals / ln
-        out[key] = (verts_arr, normals.astype(np.float32), uvs_arr, idx)
+        out[key] = ensure_up((verts_arr, normals.astype(np.float32), uvs_arr, idx))
     return out
 
 
@@ -579,9 +590,9 @@ def main() -> None:
     print("terrain mesh…")
     terrain = terrain_meshes(heights)
     b = GLBBuilder("FARMAN world generator")
-    b.material(Material("terrain_grass", base_color=(1, 1, 1, 1), metallic=0.0, roughness=0.95, texture_png=tex("grass.png")))
-    b.material(Material("terrain_rock", base_color=(1, 1, 1, 1), metallic=0.0, roughness=0.92, texture_png=tex("rock.png")))
-    b.material(Material("terrain_dirt", base_color=(1, 1, 1, 1), metallic=0.0, roughness=0.96, texture_png=tex("dirt.png")))
+    b.material(Material("terrain_grass", base_color=(0.40, 0.48, 0.28, 1), metallic=0.0, roughness=0.95, texture_png=tex("grass.png")))
+    b.material(Material("terrain_rock", base_color=(0.42, 0.40, 0.36, 1), metallic=0.0, roughness=0.92, texture_png=tex("rock.png")))
+    b.material(Material("terrain_dirt", base_color=(0.48, 0.40, 0.29, 1), metallic=0.0, roughness=0.96, texture_png=tex("dirt.png")))
     mapping = {"grass": "terrain_grass", "rock": "terrain_rock", "dirt": "terrain_dirt"}
     for key, part in terrain.items():
         b.add(Mesh(f"terrain_{key}", part[0], part[1], part[2], part[3], mapping[key]))
@@ -592,17 +603,15 @@ def main() -> None:
     rb = GLBBuilder("FARMAN road generator")
     rb.material(Material("road_asphalt", base_color=(1, 1, 1, 1), metallic=0.0, roughness=0.88, texture_png=tex("asphalt.png")))
     rb.material(Material("road_line", base_color=(0.92, 0.92, 0.88, 1), metallic=0.0, roughness=0.6))
-    rb.material(Material("road_kerb", base_color=(1, 1, 1, 1), metallic=0.0, roughness=0.9, texture_png=tex("concrete.png")))
+    rb.material(Material("road_kerb", base_color=(0.72, 0.72, 0.70, 1), metallic=0.0, roughness=0.9, texture_png=tex("concrete.png")))
     rb.material(Material("road_rail", base_color=(0.62, 0.64, 0.66, 1), metallic=0.9, roughness=0.35))
-    rb.add(Mesh("roads", *merge(asphalt_parts), "road_asphalt"))
+    rb.add(Mesh("roads", *ensure_up(merge(asphalt_parts)), "road_asphalt"))
     if line_parts:
-        rb.add(Mesh("markings", *merge(line_parts), "road_line"))
+        rb.add(Mesh("markings", *ensure_up(merge(line_parts)), "road_line"))
     if kerb_parts:
-        rb.add(Mesh("sidewalks", *merge(kerb_parts), "road_kerb"))
-    if rail_parts:
-        rb.add(Mesh("guardrail", *merge(rail_parts), "road_rail"))
-    if pole_parts:
-        rb.add(Mesh("guardrail_posts", *merge(pole_parts), "road_rail"))
+        rb.add(Mesh("sidewalks", *ensure_up(merge(kerb_parts)), "road_kerb"))
+    # Guardrails are disabled until their geometry is re-authored; malformed
+    # rails read worse than none at all.
     rb.write(os.path.join(OUT, "roads.glb"))
 
     print("props…")
@@ -621,10 +630,10 @@ def main() -> None:
         "sign_police": "sign_police",
         "lamp": "lamp",
     }
-    pb.material(Material("facade_a", base_color=(1, 1, 1, 1), roughness=0.85, texture_png=tex("facade-a.png")))
-    pb.material(Material("facade_b", base_color=(1, 1, 1, 1), roughness=0.85, texture_png=tex("facade-b.png")))
-    pb.material(Material("facade_c", base_color=(1, 1, 1, 1), roughness=0.85, texture_png=tex("facade-c.png")))
-    pb.material(Material("shop", base_color=(1, 1, 1, 1), roughness=0.8, texture_png=tex("shopfront.png")))
+    pb.material(Material("facade_a", base_color=(0.86, 0.82, 0.74, 1), roughness=0.85, texture_png=tex("facade-a.png")))
+    pb.material(Material("facade_b", base_color=(0.78, 0.76, 0.72, 1), roughness=0.85, texture_png=tex("facade-b.png")))
+    pb.material(Material("facade_c", base_color=(0.66, 0.66, 0.63, 1), roughness=0.85, texture_png=tex("facade-c.png")))
+    pb.material(Material("shop", base_color=(0.82, 0.78, 0.70, 1), roughness=0.8, texture_png=tex("shopfront.png")))
     pb.material(Material("metal", base_color=(0.52, 0.55, 0.58, 1), metallic=0.85, roughness=0.32))
     pb.material(Material("prop_concrete", base_color=(1, 1, 1, 1), roughness=0.9, texture_png=tex("concrete.png")))
     pb.material(Material("bark", base_color=(0.24, 0.17, 0.12, 1), roughness=0.95))

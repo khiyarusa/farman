@@ -218,8 +218,8 @@ camera, no orbit-while-driving, no replay camera.
 These are visible in the shipped build and in `docs/visual-qa/dev/*.png`:
 
 1. **Cars are low-poly approximations.** Body panels are lofted boxes with hard edges; there
-   are no shutlines, no badges, no interior, no underbody, no wheel wells. At chase distance
-   they read as the right silhouette, not as the real car.
+   are no shutlines, badges, interior or underbody detail, and the wheel arches are simple
+   cut-outs. At chase distance they read as the right silhouette, not as the real car.
 2. **Paint options are colour-only.** `PaintOption.metallic` and `.roughness` are authored per
    colour but `createPaintMaterial` hard-codes metallic 0.22 / roughness 0.32, and `setPaint`
    only changes albedo. Metallic paints therefore look identical in gloss.

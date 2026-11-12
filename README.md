@@ -44,11 +44,11 @@ See [`docs/visual-qa/INDEX.md`](docs/visual-qa/INDEX.md) for the capture recipe.
 | Preview | File (relative to this README) | Caption |
 |---|---|---|
 | ![Main menu](docs/visual-qa/v0.1.0/screenshots/01-menu.png) | `docs/visual-qa/v0.1.0/screenshots/01-menu.png` | Main menu — free drive, garage, missions, settings, help and exit. |
-| ![Garage](docs/visual-qa/v0.1.0/screenshots/03-garage.png) | `docs/visual-qa/v0.1.0/screenshots/03-garage.png` | Garage — car selection, technical specifications, paint and rims. |
-| ![City drive](docs/visual-qa/v0.1.0/screenshots/05-city-drive.png) | `docs/visual-qa/v0.1.0/screenshots/05-city-drive.png` | City drive — free drive from the city spawn. |
-| ![Mountain pass](docs/visual-qa/v0.1.0/screenshots/08-mountain.png) | `docs/visual-qa/v0.1.0/screenshots/08-mountain.png` | Mountain pass — the Alborz-style route. |
+| ![Garage](docs/visual-qa/v0.1.0/screenshots/02-garage.png) | `docs/visual-qa/v0.1.0/screenshots/02-garage.png` | Garage — car selection, specifications, service, paint and rims. |
+| ![City drive](docs/visual-qa/v0.1.0/screenshots/07-driving-manual.png) | `docs/visual-qa/v0.1.0/screenshots/07-driving-manual.png` | City drive — manual gearbox HUD while driving the city street. |
+| ![Mountain pass](docs/visual-qa/v0.1.0/screenshots/09-mountain.png) | `docs/visual-qa/v0.1.0/screenshots/09-mountain.png` | Mountain pass — the Alborz-style route. |
 | ![Rain](docs/visual-qa/v0.1.0/screenshots/10-rain.png) | `docs/visual-qa/v0.1.0/screenshots/10-rain.png` | Rain — the wet-road mission in the mountain weather preset. |
-| ![Settings](docs/visual-qa/v0.1.0/screenshots/12-settings.png) | `docs/visual-qa/v0.1.0/screenshots/12-settings.png` | Settings — graphics, audio, controls, assists and interface. |
+| ![Settings](docs/visual-qa/v0.1.0/screenshots/05-settings.png) | `docs/visual-qa/v0.1.0/screenshots/05-settings.png` | Settings — graphics, audio, controls, assists and interface. |
 
 ---
 
@@ -57,7 +57,7 @@ See [`docs/visual-qa/INDEX.md`](docs/visual-qa/INDEX.md) for the capture recipe.
 | Tool | Version | Needed for |
 |---|---|---|
 | Node.js | **≥ 22.12** (`package.json` `engines`) | every npm script |
-| npm | 11.x (lockfile is committed) | install and scripts |
+| npm | 10+ (lockfile v3 is committed) | install and scripts |
 | Python | **3.11+** | regenerating assets only |
 | Python packages | `numpy`, `pillow`, `arabic-reshaper`, `python-bidi` | Persian sign textures and image generation |
 | Android SDK + JDK 21 | API 36 / Temurin 21 | assembling the APK locally (CI has both) |
@@ -134,8 +134,8 @@ android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
 `android/variables.gradle` pins `minSdkVersion 24`, `compileSdkVersion 36` and
-`targetSdkVersion 36`; the manifest locks `sensorLandscape`. The debug APK is unsigned for
-release and is the only artifact this project currently produces — see the signing policy in
+`targetSdkVersion 36`; the manifest locks `sensorLandscape`. The debug APK is not signed for release and is the only installable artifact this project
+currently produces — see the signing policy in
 [`docs/release/RELEASE_CHECKLIST.md`](docs/release/RELEASE_CHECKLIST.md).
 
 **CI:** three GitHub Actions workflows drive the release path — `ci.yml` (typecheck, lint,
@@ -200,7 +200,7 @@ What that means behind the wheel:
 - **Pride** — no ABS/TCS/ESC. It stalls if you release the clutch under load, needs the clutch
   for every shift, and has the weakest brakes and narrowest tyres.
 - **Corolla** — a belt CVT, not a stepped automatic: the ratio sweeps between 2.48 and 0.4
-  instead of pausing on shifts. ABS, TCS, ESC and hill start are on by default.
+  instead of pausing on shifts. ABS, TCS and ESC are on by default.
 - **BMW** — torque converter with a 2.05 stall ratio, lock-up above 0.86 speed ratio, eight
   ratios and rear-wheel drive. It is the only rear-drive car in the slice, so its limit
   behaviour is the one that differs most from the two front-drive cars.
@@ -282,6 +282,9 @@ python tools/qa/img-check.py    # luminance bands of the generated sky maps
 | [`AGENTS.md`](AGENTS.md) | Engineering contract: invariants, boundaries, verification, change recipes |
 | [`ART_BIBLE.md`](ART_BIBLE.md) | Palette, typography, lighting, vehicle/environment art rules and honest visual shortcomings |
 | [`ASSET_LICENSES.md`](ASSET_LICENSES.md) | Provenance and licences for every asset family, plus trademark status |
+| [`VEHICLE_DATA_SOURCES.md`](VEHICLE_DATA_SOURCES.md) | Per-car values, verified vs estimated, and divergences from the research record |
+| [`TECHNICAL_IMPLEMENTATION_PLAN.md`](TECHNICAL_IMPLEMENTATION_PLAN.md) | Implementation audit and priority order for the remaining work |
+| [`docs/qa/TEST_PLAN.md`](docs/qa/TEST_PLAN.md) | Test strategy, expected values and the manual Android checklist |
 | [`docs/qa/SKILL_AND_TOOL_USAGE.md`](docs/qa/SKILL_AND_TOOL_USAGE.md) | Audit of the skills and tools actually used while building this slice |
 | [`docs/release/RELEASE_CHECKLIST.md`](docs/release/RELEASE_CHECKLIST.md) | Release gates, evidence to attach, signing policy |
 | [`docs/release/RELEASE_NOTES_v0.1.0.md`](docs/release/RELEASE_NOTES_v0.1.0.md) | Draft notes for the v0.1.0 preview |
@@ -344,6 +347,8 @@ Candid list for this slice — these are shipped behaviour, not a wish list.
   pre-drive values. Refuel and repair are therefore mostly cosmetic in this slice.
 - **No audio playback.** Four volume sliders persist values that nothing consumes;
   `profile.audio` is metadata only.
+- **Three settings are inert.** Steering sensitivity, control size and control opacity are
+  stored and persist, but the control layer does not consume them yet.
 - **Keyboard left steering is dead** (QA/desktop only; touch is unaffected) — see the controls
   note above.
 - **Android artifact is a debug APK.** It is not signed for release and not Play-ready; see

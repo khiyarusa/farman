@@ -1,0 +1,140 @@
+{
+  "mode": "drive",
+  "paused": false,
+  "vehicle": {
+    "speedKph": 0.029219574971502828,
+    "speedMs": -0.00811654860319523,
+    "rpm": 0,
+    "gear": 1,
+    "gearLabel": "1",
+    "throttle": 0,
+    "brake": 0,
+    "clutch": 0,
+    "handbrake": 0,
+    "steering": 0,
+    "limiter": false,
+    "stalled": true,
+    "shifting": false,
+    "selector": "D",
+    "fuelLitres": 44.2492894295302,
+    "fuelFraction": 0.7499879564327153,
+    "fuelPer100Km": 0,
+    "coolantC": 24.964385714461585,
+    "odometerKm": 0.00037091490635076963,
+    "engineTorque": 0,
+    "enginePowerKw": 0,
+    "drivelineRpm": 480.53741681602173,
+    "absActive": false,
+    "tcsActive": false,
+    "escActive": false,
+    "bodyDamage": 0,
+    "engineWear": 0,
+    "yawRate": 1.582039221847964e-10,
+    "lateralG": -1.3089396775015453e-13,
+    "longitudinalG": -0.09127552180570375,
+    "wheels": [
+      {
+        "omega": 4.041220688926339,
+        "slipRatio": 1.2,
+        "slipAngleDeg": 8.277364972800043e-8,
+        "normalForce": 3977.4139817488735,
+        "mu": 0.8052583862925143,
+        "suspLength": 0.2,
+        "travelOffset": 0,
+        "contact": true,
+        "surface": "asphalt",
+        "tempC": 28.82622699778048,
+        "wear": 0.0000021429702594757215,
+        "lateralForce": -0.00003315286532725826
+      },
+      {
+        "omega": 7.366719629838744,
+        "slipRatio": -0.5591463689123738,
+        "slipAngleDeg": 8.277364972800043e-8,
+        "normalForce": 3977.413981745684,
+        "mu": 0.8059367830763223,
+        "suspLength": 0.2,
+        "travelOffset": 0,
+        "contact": true,
+        "surface": "asphalt",
+        "tempC": 28.915924752516005,
+        "wear": 0.00000217915326626302,
+        "lateralForce": -0.00003315286532725826
+      },
+      {
+        "omega": 11.524664401932466,
+        "slipRatio": -0.10318858755102116,
+        "slipAngleDeg": 8.277364972800043e-8,
+        "normalForce": 3600.811018254077,
+        "mu": 0.8126378389998947,
+        "suspLength": 0.2,
+        "travelOffset": 0,
+        "contact": true,
+        "surface": "asphalt",
+        "tempC": 28.625855576544733,
+        "wear": 0.0000021564298187689515,
+        "lateralForce": -0.000030280750569895855
+      },
+      {
+        "omega": -0.7092134725509744,
+        "slipRatio": 1.2,
+        "slipAngleDeg": 8.277364972800043e-8,
+        "normalForce": 3600.811018251366,
+        "mu": 0.812889150547254,
+        "suspLength": 0.2,
+        "travelOffset": 0,
+        "contact": true,
+        "surface": "asphalt",
+        "tempC": 28.66220760247312,
+        "wear": 0.0000021678737115626404,
+        "lateralForce": -0.000030280750569895855
+      }
+    ],
+    "groundSurface": "asphalt",
+    "onRoad": true
+  },
+  "position": {
+    "x": 103.93965148925781,
+    "y": 0.019999980926513672,
+    "z": 3.200000047683716
+  },
+  "yaw": 1.5708000014925252,
+  "driveline": {
+    "gear": 1,
+    "totalRatio": 15.385,
+    "clutchTorque": 0,
+    "wheelTorque": 0,
+    "slipping": false,
+    "shifting": false,
+    "cvtRatio": 1,
+    "tcLocked": false,
+    "overRevRisk": false,
+    "drivelineRpm": 480.53741681602173
+  },
+  "body": {
+    "y": 0.019999980926513672,
+    "mass": 1545,
+    "sleeping": false,
+    "susp": [
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "contact": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "fz": [
+      3977,
+      3977,
+      3601,
+      3601
+    ]
+  },
+  "mission": "parking",
+  "missionStatus": "running",
+  "worldLoaded": true
+}

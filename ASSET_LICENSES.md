@@ -71,7 +71,7 @@ Licence values read from each installed package's `package.json`.
 |---|---|---|
 | `@babylonjs/core`, `@babylonjs/loaders` | 8.56.2 | Apache-2.0 |
 | `@dimforge/rapier3d-compat` | 0.21.0 | Apache-2.0 |
-| `@capacitor/core`, `@capacitor/app`, `@capacitor/android`, `@capacitor/cli` | 8.6.x | MIT |
+| `@capacitor/core`, `@capacitor/android`, `@capacitor/cli` (8.6.0), `@capacitor/app` (8.1.2) | 8.6.x / 8.1.2 | MIT |
 | `vite` | 7.3.8 | MIT |
 | `typescript` | 5.9.3 | Apache-2.0 |
 | `vitest` | 3.2.7 | MIT |

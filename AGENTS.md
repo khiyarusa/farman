@@ -26,7 +26,9 @@ requires breaking one, change this file in the same commit and say why.
    cost, not a licence to add more.)
 6. **Persian text only through the dictionary.** UI strings come from `src/ui/i18n.ts`
    (`FA.*`); mission titles/descriptions live in `src/missions/definitions.ts`; road names
-   live in `world.json`. Never inline a Persian string in a screen or component.
+   live in `world.json`. Never inline a Persian string in a screen or component. Existing
+   exceptions (a few toasts and boot labels in `src/app.ts`) are debt: move them into `FA`
+   when you touch them, and do not add more.
 7. **Numbers only through `src/ui/format.ts`.** Never write raw ASCII digits into the DOM.
    Use `formatNumber`, `formatSpeed`, `formatDistance`, `formatMoney`, `formatMoneyShort`,
    `formatTime`, `formatClock`, `formatPercent`, `formatLitres`, `formatTemp`. They apply
@@ -42,7 +44,8 @@ requires breaking one, change this file in the same commit and say why.
     no passwords in code or docs. `.gitignore` covers these; do not override it.
 11. **Do not regress the physics test suite.** Any change to `engine.ts`,
     `transmission.ts`, `tire.ts`, `vehicle.ts` or the profiles must keep the numeric tests
-    green (see §4) and must state in the commit message which behaviour changed.
+    green once they exist, and must state in the commit message which behaviour changed.
+    Until the suite exists (§4), add the test that pins your change.
 12. **Docs track code.** A change to physics constants, mission rules, economy values,
     controls, save schema or assets updates `GDD.md` / `TDD.md` / `VEHICLE_DATA_SOURCES.md` /
     `ASSET_LICENSES.md` in the same change.

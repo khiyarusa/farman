@@ -49,8 +49,9 @@ relative to the repository root. Numbers below were read from source, not estima
 | `src/main.ts` | Boot, WebGL2 probe, fatal error UI, `window.__farman` | QA handle |
 
 There is **no `src/audio` and no `src/platform`**. Capacitor detection is inline
-(`App.tryDetectNative`); nothing plays sound. `src/rendering` is the only layer that imports
-Babylon; `src/vehicles` imports Rapier types only through `src/physics/world.ts`.
+(`App.tryDetectNative`); nothing plays sound. `src/rendering` and `src/traffic` are the only
+layers that import Babylon; `src/vehicles` and `src/missions` import Rapier only as types
+through `src/physics/world.ts`.
 
 ## 3. The fixed-step loop
 
@@ -107,8 +108,9 @@ Chassis (`VehicleSim` constructor):
   mass properties: mass, CoM `(0, centreOfMassHeightM − H·0.34, wheelbase·(frontShare − 0.5))`,
   inertia `ixx = m(L²+H²)/12`, `iyy = yawInertiaKgM2 || m(L²+W²)/12`, `izz = m(W²+H²)/12`.
 - Every step the body's `y` is snapped to `surface.heightAt(x, z)` and vertical velocity is
-  zeroed. There is **no four-spring rigid-body suspension solver**; ride height and body
-  attitude are terrain-derived, suspension travel is visual and used for load transfer.
+  zeroed. There is **no four-spring rigid-body suspension solver** and no body roll/pitch:
+  height comes from the terrain, while suspension travel is a visual offset used for load
+  transfer.
 
 Per step, in order:
 

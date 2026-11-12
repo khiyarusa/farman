@@ -17,7 +17,7 @@ testing, not a store release.
 | Car | Drivetrain | Gearbox | Power / torque | Character |
 |---|---|---|---|---|
 | **Saipa Pride 131** (2008) | FWD | 5-speed manual | 58 hp / 100 N·m | No driver aids; needs the clutch, can stall, narrow tyres and the weakest brakes |
-| **Toyota Corolla 2.0** (E210, 2021) | FWD | Belt CVT | 152 hp / 205 N·m | No shift pauses — the ratio sweeps; ABS, TCS, ESC and hill start available |
+| **Toyota Corolla 2.0** (E210, 2021) | FWD | Belt CVT | 152 hp / 205 N·m | No shift pauses — the ratio sweeps; ABS, TCS and ESC available |
 | **BMW 320i** (G20, 2021) | RWD | 8-speed torque-converter automatic | 205 hp / 300 N·m | Converter stall and lock-up, eight ratios, and the only rear-drive car here |
 
 Power is computed from each car's in-game torque curve, so it can differ from a brochure
@@ -62,7 +62,7 @@ minimap.
 
 - Three camera modes: chase, close and hood.
 - Quality presets (low / balanced / high), render scale, steering mode (wheel / buttons /
-  gyro), sensitivity, control layout, UI scale, assists, digit style and tutorial hints.
+  gyro), left/right-handed layout, UI scale, assists, digit style and tutorial hints.
 - Career state is saved **locally** in the Android WebView's `localStorage`: credits, selected
   car, paint/rim choices, mission records and settings. There is no account and no cloud sync.
 
@@ -84,7 +84,7 @@ Please do not file these as regressions; they are known scope cuts for v0.1.0.
   Refuel and repair are therefore mostly cosmetic in this slice.
 - **No cloud saves, accounts, multiplayer or leaderboards.** Offline only.
 - **No day/night cycle, pedestrians, police or checkpoints.** Two weather states: dry and
-  rain (rain changes grip, fog and sky tint; there are no raindrops or wipers).
+  rain (rain changes grip, fog and the clear-sky colour; there are no raindrops or wipers).
 - **No gamepad or steering-wheel support.** Touch and keyboard only.
 - **Not a signed release.** The APK is a debug build; it is not Play-Store ready and must not
   be uploaded as a production release.
@@ -132,6 +132,7 @@ To remove the game and its save, uninstall the app or clear its storage.
 | Rain is a fog/grip change | No droplets, spray, puddles or wipers. |
 | Performance is unmeasured on real hardware | No frame-time, draw-call or thermal data exists yet. The quality presets are budgets. A Galaxy A23 has not been tested. |
 | Save writes are debounced | A change is written 400 ms after it is made; a hard kill inside that window can lose the last change. |
+| Three settings are inert | Steering sensitivity, control size and control opacity are stored but not applied to the controls. |
 | Fuel/wear/damage do not persist | Drive state is per-session; see the scope cut above. |
 | Keyboard left steering is dead | `A` / `←` is clamped to zero in the desktop keyboard fallback. Touch steering is unaffected; this only matters on desktop/QA. |
 | Mission objectives are geometric | Parking, braking and finish zones are distances along the spawn heading, not authored trigger volumes. A spawn change requires retuning. |
