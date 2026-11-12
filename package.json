@@ -1,7 +1,7 @@
 {
   "name": "farman",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "FARMAN (ÙØ±Ù…Ø§Ù†) â€” Persian-first, offline-first Android driving simulation. Every vehicle behaves differently.",
   "type": "module",
   "license": "UNLICENSED",

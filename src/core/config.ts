@@ -7,8 +7,8 @@
 export const APP = {
   name: 'FARMAN',
   nameFa: 'فرمان',
-  version: '0.1.0',
-  buildTag: 'v0.1.0-dev',
+  version: '0.1.2',
+  buildTag: 'v0.1.2-preview',
   appId: 'com.khiyarusa.farman',
 } as const;
 
