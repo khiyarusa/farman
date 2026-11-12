@@ -296,10 +296,10 @@ def build_glass(spec: CarSpec):
                 y_belt = min(spec.belt_y + 0.01, curve(top_curve, z0) - 0.03)
                 y_belt_b = min(spec.belt_y + 0.01, curve(top_curve, z1) - 0.03)
                 y_top = spec.roof_y - 0.085
-                hw0 = width_at(spec, z0) * 0.972
-                hw1 = width_at(spec, z1) * 0.972
-                hw0t = width_at(spec, z0) * 0.865
-                hw1t = width_at(spec, z1) * 0.865
+                hw0 = width_at(spec, z0) * 1.005
+                hw1 = width_at(spec, z1) * 1.005
+                hw0t = width_at(spec, z0) * 0.93
+                hw1t = width_at(spec, z1) * 0.93
                 parts.append((
                     np.asarray([
                         [side * hw0, y_belt, z0],
@@ -395,7 +395,7 @@ def build_mirrors(spec: CarSpec):
 def make_materials(builder: GLBBuilder, spec: CarSpec) -> Dict[str, str]:
     m = {
         "paint": Material("farfan_paint", base_color=(*spec.paint, 1.0), metallic=0.12, roughness=0.32, clearcoat=1.0, clearcoat_roughness=0.06),
-        "glass": Material("farfan_glass", base_color=(0.10, 0.13, 0.14, 1.0), metallic=0.0, roughness=0.08, alpha_mode="BLEND", alpha=0.38, double_sided=True),
+        "glass": Material("farfan_glass", base_color=(0.06, 0.08, 0.09, 1.0), metallic=0.2, roughness=0.05, alpha_mode="BLEND", alpha=0.72, double_sided=True),
         "rubber": Material("farfan_rubber", base_color=(0.018, 0.018, 0.02, 1.0), metallic=0.0, roughness=0.92),
         "rim": Material("farfan_rim", base_color=(*spec.rim, 1.0), metallic=1.0, roughness=0.22),
         "disc": Material("farfan_brake", base_color=(0.28, 0.28, 0.29, 1.0), metallic=0.9, roughness=0.45),
