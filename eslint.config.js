@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'android/**', 'node_modules/**', 'tools/assetgen/**', 'tools/qa/**', 'tools/*.py', 'docs/**', '.agents/**', '.zwork/**'],
+    ignores: ['dist/**', 'android/**', 'node_modules/**', 'tools/assetgen/**', 'tools/qa/**', 'tools/*.py', 'docs/**', '.agents/**', '.zwork/**', '.vite/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
