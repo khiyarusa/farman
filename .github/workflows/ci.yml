@@ -39,8 +39,9 @@ jobs:
 
       - name: Verify the bundle has no remote runtime dependencies
         run: |
-          if grep -RIn --include='*.js' -E 'https?://(cdn|unpkg|jsdelivr|fonts\.googleapis)' dist/assets | grep -v 'sourceMappingURL' | head -20; then
-            echo "::error::Remote runtime dependency found in the bundle"
+          matches=$(grep -RIl --include='*.js' -E 'cdn\.jsdelivr|unpkg\.com|cdnjs\.cloudflare|fonts\.googleapis' dist/assets || true)
+          if [ -n "$matches" ]; then
+            echo "::error::Remote runtime dependency found: $matches"
             exit 1
           fi
           echo "No remote runtime dependencies found."

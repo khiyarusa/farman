@@ -23,32 +23,32 @@ release issue) and fill every row for the actual build.
 | Version code | `1` |
 | Commit | `<fill in>` |
 | Build date | `<fill in>` |
-| Built by | CI (Android SDK 36, JDK 17) — local machine has no SDK/JDK 17 |
-| Artifact | `app-debug.apk` |
+| Built by | CI — `android.yml` (Android SDK 36, Temurin 21); the local machine has no SDK |
+| Artifact | `farman-v0.1.0-debug.apk` (built from `app-debug.apk`) |
 | SHA-256 | `<fill in — see gate 12>` |
 
 ---
 
 ## 1. Gate summary
 
-Status values: **PASS** (evidence attached), **FAIL**, **OPEN** (not yet run), **N/A**
-(justified waiver). Do not mark a gate PASS from a previous build; the evidence must belong
-to the commit in §0.
+Status values: **PASS** (evidence attached), **FAIL**, **OPEN** (not yet run or evidence
+incomplete), **N/A** (justified waiver). Do not mark a gate PASS from a previous build; the
+evidence must belong to the commit in §0.
 
 | # | Gate | Pass criterion | Evidence to attach | Status 2026-11-12 |
 |---|---|---|---|---|
-| 1 | Build passes | `npm ci && npm run typecheck && npm run build` all exit 0 from a clean checkout; `dist/` is produced | Command log + bundle sizes | **PASS locally** (typecheck + 900-module build); CI run still required |
-| 2 | Tests pass | `npm run test` exits 0; no skipped tests that cover a gate | Vitest summary (file/test counts) | **PASS locally** — 2 files, 24/24 |
+| 1 | Build passes | `npm ci && npm run typecheck && npm run lint && npm run build` all exit 0 from a clean checkout; `dist/` is produced | Command log + bundle sizes | **OPEN** — local typecheck/lint/build pass; clean CI run pending |
+| 2 | Tests pass | `npm run test` exits 0; no skipped tests that cover a gate | Vitest summary (file/test counts) | **OPEN** — 24/24 locally; attach the clean run |
 | 3 | 3 vehicles drive | Each car launches, shifts, brakes, reverses and resets in free drive without a crash or unrecoverable stall | Per-car notes + telemetry/HUD captures | **OPEN** |
 | 4 | Manual vs automatic behaviour is distinct | The Pride needs the clutch and can stall; the Corolla CVT sweeps without shift pauses; the BMW torque-converter auto steps through 8 gears and locks up | Three short screen recordings or telemetry logs + the matrix in §3 | **OPEN** |
 | 5 | Missions start and finish | All 7 missions start from their spawn, show the objective, reach success or failure, and open the result overlay | Mission matrix in §4, one line per mission | **OPEN** |
 | 6 | Save persists | Settings, paint/rim choice, credits and mission records survive a reload; corrupt JSON falls back to the backup without a crash | Before/after save JSON + reload notes | **OPEN** |
 | 7 | RTL screens verified | Menu, garage, missions, settings, help, pause, results: no clipped text, correct Persian digits, safe areas respected, no Latin fallback glyphs | Screenshot set + the RTL checklist in §5 | **OPEN** |
-| 8 | Screenshots committed | The six release captures exist at the documented paths, plus `VISUAL_QA_REPORT.md`; files are tracked, not only local | Paths + commit hash | **OPEN** |
-| 9 | APK built by CI | A CI run for the release commit produced `app-debug.apk` and the artifact downloads | CI run URL + artifact name | **OPEN** — no run recorded in this checkout |
-| 10 | Signing policy respected | Only a debug APK is published unless all four keystore secrets exist; no key material in the repo | `apksigner verify --print-certs` output; secret names present/absent (never values) | **POLICY SET** — debug only |
-| 11 | Release notes drafted | `docs/release/RELEASE_NOTES_v0.1.0.md` matches the shipped feature set and known issues | Link + reviewer initials | **DRAFTED** |
-| 12 | Checksums computed | SHA-256 of the APK is recorded in the release record and in the notes | `sha256sum` / `Get-FileHash` output | **OPEN** |
+| 8 | Screenshots committed | The 12 captures defined in `docs/visual-qa/INDEX.md` exist (including the six README paths), plus `VISUAL_QA_REPORT.md`; files are tracked, not only local | Paths + commit hash | **OPEN** |
+| 9 | APK built by CI | The `Android` workflow (`android.yml`) produced `farman-v0.1.0-debug.apk` for the release commit and the `farman-android` artifact downloads | Workflow run URL + artifact name + digest | **OPEN** — no run recorded in this checkout |
+| 10 | Signing policy respected | Only a debug APK is offered for installation unless all four keystore secrets exist; the unsigned release AAB stays a CI artifact and is never published as a download; no key material in the repo | `apksigner verify --print-certs` output; artifact list; secret names present/absent (never values) | **OPEN** — policy is debug-only; verify on the artifact |
+| 11 | Release notes drafted | `docs/release/RELEASE_NOTES_v0.1.0.md` matches the shipped feature set and known issues | Link + reviewer initials | **PASS** — notes drafted |
+| 12 | Checksums computed | SHA-256 of the APK is recorded in the release record and in the notes; it matches CI's `SHA256SUMS.txt` | `sha256sum` / `Get-FileHash` output + CI checksum file | **OPEN** |
 
 ---
 
@@ -59,6 +59,7 @@ Run from a clean checkout, not from a warm `node_modules`:
 ```bash
 npm ci
 npm run typecheck
+npm run lint
 npm run build
 ```
 
@@ -116,7 +117,8 @@ Spawns come from `public/assets/world/world.json`; the fallback pose in
 
 For each: the mission must **start** (loading completes, HUD objective is the mission's, not
 free drive), **finish** (success or failure), and **open the result overlay** after the
-1.1 s settle. A mission that can only be failed by waiting is a failure of this gate.
+1.1 s settle. A mission that cannot reach its success path (it only ever times out) fails
+this gate.
 
 Also confirm the result is written to the save (`missions[id].attempts` increments,
 `bestScore` updates, credits change by the displayed reward).
@@ -159,7 +161,9 @@ Attach the screenshots; a PASS without them is not evidence.
 
 ## 7. Gate 8 — screenshots
 
-Required six (see `docs/visual-qa/INDEX.md` for the full 12-shot set):
+Required captures: all 12 in `docs/visual-qa/INDEX.md` §3. The full set covers free drive,
+missions, traffic, highway, rural, pause and settings as well as the six README paths. The
+six minimum paths are:
 
 ```
 docs/visual-qa/v0.1.0/screenshots/01-menu.png
@@ -180,8 +184,8 @@ docs/visual-qa/v0.1.0/screenshots/12-settings.png
 
 ### 8.1 CI build
 
-The APK is assembled on CI because the authoring machine has no Android SDK and no JDK 17.
-The expected sequence is:
+The APK is assembled on CI because the authoring machine has no Android SDK and no JDK 21.
+The `Android` workflow (`android.yml`) runs the expected sequence:
 
 ```bash
 npm ci
@@ -190,15 +194,18 @@ npx cap sync android
 cd android && ./gradlew assembleDebug
 ```
 
-Attach the CI run URL, the artifact name (`app-debug.apk`) and its digest. A local
-`gradlew assembleDebug` on a machine without the SDK is not a substitute for this gate.
+Attach the workflow run URL, the `farman-android` artifact name
+(`farman-v0.1.0-debug.apk`) and its digest. A local `gradlew assembleDebug` on a machine
+without the SDK is not a substitute for this gate. The `android.yml` job also emits an
+unsigned release AAB (`farman-v0.1.0-release-unsigned.aab`); that file is not a publishable
+release artifact.
 
 ### 8.2 Signing policy
 
 | Condition | Allowed output | Rule |
 |---|---|---|
-| No keystore secrets | **Debug APK only** (`assembleDebug`, debug keystore) | Distributable for internal testing only; never upload as a store release |
-| All four secrets present in CI | `assembleRelease`, signed | Secrets: `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` |
+| No keystore secrets | **Debug APK only** (`assembleDebug`, debug keystore) | Distributable for internal testing only; the unsigned release AAB from the same workflow must not be published |
+| All four secrets present in CI | `assembleRelease`, signed | Keystore file (base64 or path), store password, key alias and key password. The secret names are defined by the CI pipeline; never put them in this repository. |
 | Some but not all secrets | **Stop** | Do not fall back to an unsigned release build |
 | Any `*.jks` / `*.keystore` / password in the repo or docs | **Stop** | `.gitignore` covers these; a committed key is a security incident, not a build fix |
 
@@ -210,7 +217,7 @@ Rules:
 - Verify the certificate of the artifact you publish:
 
   ```bash
-  apksigner verify --print-certs app-debug.apk
+  apksigner verify --print-certs farman-v0.1.0-debug.apk
   ```
 
   A debug APK shows the Android debug certificate. Record the SHA-256 fingerprint, not the
@@ -236,14 +243,16 @@ Compute from the exact file that will be published:
 
 ```bash
 # Linux / CI
-sha256sum app-debug.apk | tee app-debug.apk.sha256
+sha256sum farman-v0.1.0-debug.apk | tee farman-v0.1.0-debug.apk.sha256
 
 # Windows PowerShell
-Get-FileHash -Algorithm SHA256 .\app-debug.apk | Format-List
+Get-FileHash -Algorithm SHA256 .\farman-v0.1.0-debug.apk | Format-List
 ```
 
-Record the digest in §0 and in the release notes. If the APK is rebuilt, recompute — a
-checksum from a previous build is worse than no checksum.
+CI already writes `SHA256SUMS.txt` next to the artifact; recompute locally from the exact
+file that will be published and confirm the two agree. Record the digest in §0 and in the
+release notes. If the APK is rebuilt, recompute — a checksum from a previous build is worse
+than no checksum.
 
 ---
 

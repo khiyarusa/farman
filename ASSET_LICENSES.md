@@ -25,7 +25,7 @@ belongs to the project.
 | World metadata | `tools/assetgen/world.py` | `world.json` | Road polylines, spawn poses, Persian road names |
 | Surface textures | `tools/assetgen/textures.py` | `asphalt.png`, `concrete.png`, `dirt.png`, `grass.png`, `rock.png` | Tileable noise, seed 20261112 |
 | Facades | `tools/assetgen/textures.py` | `facade-a.png`, `facade-b.png`, `facade-c.png`, `shopfront.png` | Generated window/brick patterns |
-| Road signs | `tools/assetgen/textures.py` | `sign-tehran.png`, `sign-chalus.png`, `sign-police.png` | Original artwork with Persian place names; not photographs of real signs |
+| Road signs | `tools/assetgen/textures.py` | `sign-tehran.png`, `sign-chalus.png`, `sign-police.png` | Original artwork: tehran (۱۲ کیلومتر), chalus (۴۵ کیلومتر), and a speed-control sign (کنترل سرعت / ۵۰); not photographs of real signs |
 | Sky | `tools/assetgen/sky.py` | `sky-day.png`, `sky-dusk.png`, `sky-rain.png` | 2048 × 1024 equirectangular gradients; `sky-dusk.png` is currently unused by the game |
 | Brand/UI graphics | inline SVG in `index.html`, `src/ui/screens/*.ts` | — | Steering-wheel boot mark, icons; drawn in code |
 
@@ -122,8 +122,8 @@ commercial titles. Before any store release:
 3. If names change, update `src/vehicles/profiles/*.ts` (`make`, `model`, `nameEn`,
    `nameFa`), `GDD.md`, `VEHICLE_DATA_SOURCES.md`, and the generated GLB material names.
 
-The Persian place names on generated signs (تهران، چالوس) and the word پلیس are geographic
-and generic terms, drawn as original artwork, not reproductions of official signage.
+The Persian place names on generated signs (تهران، چالوس) and the generic speed-control
+wording (کنترل سرعت) are drawn as original artwork, not reproductions of official signage.
 
 ## 7. Adding an asset — checklist
 

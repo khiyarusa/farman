@@ -17,11 +17,11 @@ testing, not a store release.
 | Car | Drivetrain | Gearbox | Power / torque | Character |
 |---|---|---|---|---|
 | **Saipa Pride 131** (2008) | FWD | 5-speed manual | 58 hp / 100 N·m | No driver aids; needs the clutch, can stall, narrow tyres and the weakest brakes |
-| **Toyota Corolla 2.0** (E210, 2021) | FWD | Belt CVT | 152 hp / 205 N·m | No shift pauses — the ratio sweeps; ABS, TCS, ESC and hill start |
+| **Toyota Corolla 2.0** (E210, 2021) | FWD | Belt CVT | 152 hp / 205 N·m | No shift pauses — the ratio sweeps; ABS, TCS, ESC and hill start available |
 | **BMW 320i** (G20, 2021) | RWD | 8-speed torque-converter automatic | 205 hp / 300 N·m | Converter stall and lock-up, eight ratios, and the only rear-drive car here |
 
-Power is computed from each car's in-game torque curve, so it can differ slightly from a
-brochure. All three profiles are marked as estimated engineering data.
+Power is computed from each car's in-game torque curve, so it can differ from a brochure
+figure. All three profiles are marked as estimated engineering data.
 
 ### One connected region
 
@@ -96,8 +96,9 @@ Please do not file these as regressions; they are known scope cuts for v0.1.0.
 **Requirements:** Android 7.0 (API 24) or newer, a device with WebGL2, landscape orientation.
 The app is distributed by sideloading only.
 
-1. Download `app-debug.apk` from the CI run for this release (artifact name:
-   `app-debug.apk`). Do not use an APK from a different commit.
+1. Download `farman-v0.1.0-debug.apk` from the release or from the `farman-android` artifact
+   of the `Android` workflow for this commit. (Inside the artifact the same file is named
+   `app-debug.apk`.) Do not use an APK from a different commit.
 2. On the phone, allow installs from the app you are using to open the file (Settings →
    Apps → Special access → Install unknown apps). The exact path varies by manufacturer.
 3. Open the APK and confirm the install.
@@ -107,7 +108,7 @@ The app is distributed by sideloading only.
 With `adb`:
 
 ```bash
-adb install -r app-debug.apk
+adb install -r farman-v0.1.0-debug.apk
 ```
 
 First launch:
@@ -135,7 +136,7 @@ To remove the game and its save, uninstall the app or clear its storage.
 | Keyboard left steering is dead | `A` / `←` is clamped to zero in the desktop keyboard fallback. Touch steering is unaffected; this only matters on desktop/QA. |
 | Mission objectives are geometric | Parking, braking and finish zones are distances along the spawn heading, not authored trigger volumes. A spawn change requires retuning. |
 | No audio | Repeating because it is the most noticeable omission. |
-| Debug build | Larger and less optimised than a release build; not signed for distribution. |
+| Debug build | Debuggable and not signed for distribution; not a store artifact. |
 
 ---
 
@@ -153,7 +154,7 @@ The `.glb` files are written by a small original glTF writer and committed to
 
 The web bundle is built with `npm run build`, synced into the Android project with
 `npx cap sync android`, and the debug APK is assembled by CI on a Linux runner with the
-Android SDK 36 and JDK 17:
+Android SDK 36 and Temurin 21:
 
 ```bash
 npm ci
@@ -161,6 +162,10 @@ npm run build
 npx cap sync android
 cd android && ./gradlew assembleDebug
 ```
+
+The workflows are in `.github/workflows/`: `ci.yml` checks types, lint, tests and the web
+bundle; `android.yml` builds the debug APK and checksums; `release.yml` attaches the APK and
+`SHA256SUMS.txt` to a tagged preview release.
 
 ---
 
@@ -171,10 +176,10 @@ time. If the file is rebuilt, recompute it.
 
 | File | SHA-256 |
 |---|---|
-| `app-debug.apk` | `<fill in at build time>` |
+| `farman-v0.1.0-debug.apk` | `<fill in at build time>` |
 
-Verify on Linux/macOS: `sha256sum app-debug.apk`; on Windows PowerShell:
-`Get-FileHash -Algorithm SHA256 .\app-debug.apk`.
+Verify on Linux/macOS: `sha256sum farman-v0.1.0-debug.apk`; on Windows PowerShell:
+`Get-FileHash -Algorithm SHA256 .\farman-v0.1.0-debug.apk`.
 
 ---
 

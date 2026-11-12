@@ -146,7 +146,8 @@ telemetry object.
 
 | Case | Expectation |
 |---|---|
-| Clean parking run at par/2, 0 collisions, 0.5 L used | score 100 (clamped), reward = mission reward |
+| Ideal run on a par mission: elapsed 0.5·par, 0 collisions, 0 L used, 200 m travelled | time/collision/fuel/distance factors all 1 → score 100, reward = mission reward |
+| Parking geometry only (34 m travelled, otherwise ideal) | distanceFactor 0.17 → score ≈ 85; proves distance is capped by the 200 m default |
 | One collision | `collisions === 1`, `penalty === 12`, score reduced |
 | Failure (time out) | `success false`, reward 0, score ≥ 4 |
 | Reward rounding | `round(reward × score / 100)` |

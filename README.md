@@ -60,7 +60,7 @@ See [`docs/visual-qa/INDEX.md`](docs/visual-qa/INDEX.md) for the capture recipe.
 | npm | 11.x (lockfile is committed) | install and scripts |
 | Python | **3.11+** | regenerating assets only |
 | Python packages | `numpy`, `pillow`, `arabic-reshaper`, `python-bidi` | Persian sign textures and image generation |
-| Android SDK + JDK 17 | API 36 / Temurin 17 | assembling the APK locally (CI has both) |
+| Android SDK + JDK 21 | API 36 / Temurin 21 | assembling the APK locally (CI has both) |
 
 The web app itself has no Python or Android dependency. A desktop browser is the fastest
 way to develop; the Android WebView is the target.
@@ -138,9 +138,12 @@ android/app/build/outputs/apk/debug/app-debug.apk
 release and is the only artifact this project currently produces — see the signing policy in
 [`docs/release/RELEASE_CHECKLIST.md`](docs/release/RELEASE_CHECKLIST.md).
 
-**CI:** the debug APK is assembled on CI, where the Android SDK and JDK 17 are installed.
-The authoring machine for this repository has neither, so `gradlew` is not run locally;
-attach the CI run URL and the APK SHA-256 to the release checklist for every build.
+**CI:** three GitHub Actions workflows drive the release path — `ci.yml` (typecheck, lint,
+tests, web build and a no-remote-dependency check), `android.yml` (debug APK plus an unsigned
+release AAB, with `SHA256SUMS.txt`) and `release.yml` (tagged preview releases carrying the
+debug APK and its checksums). The authoring machine has no Android SDK, so `gradlew` is not
+run locally; attach the `Android` workflow run URL and the APK digest to the release
+checklist for every build.
 
 ---
 
