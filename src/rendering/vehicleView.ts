@@ -226,8 +226,8 @@ export class VehicleView {
 function createPaintMaterial(scene: Scene, hex: string): PBRMaterial {
   const mat = new PBRMaterial('farman-paint', scene);
   mat.albedoColor = Color3.FromHexString(hex);
-  mat.metallic = 0.82;
-  mat.roughness = 0.28;
+  mat.metallic = 0.22;
+  mat.roughness = 0.32;
   mat.clearCoat.isEnabled = true;
   mat.clearCoat.intensity = 1;
   mat.clearCoat.roughness = 0.06;

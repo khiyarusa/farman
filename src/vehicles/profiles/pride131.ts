@@ -1,7 +1,7 @@
 import type { VehicleProfile } from '../profile';
 
 /**
- * Saipa Pride 131 â€” the Iranian everyman sedan.
+ * Saipa Pride 131 — the Iranian everyman sedan.
  * 1.3 litre 8-valve four, front-wheel drive, five-speed manual, no driver aids.
  * Reference data: see docs/VEHICLE_DATA_SOURCES.md (confidence: mixed verified/estimated).
  */
@@ -12,9 +12,9 @@ export const pride131: VehicleProfile = {
   trim: 'LX',
   year: 2008,
   market: 'Iran',
-  nameFa: 'Ø³Ø§ÛŒÙ¾Ø§ Ù¾Ø±Ø§ÛŒØ¯ Û±Û³Û±',
+  nameFa: 'سایپا پراید ۱۳۱',
   nameEn: 'Saipa Pride 131',
-  bodyStyleFa: 'Ø³Ø¯Ø§Ù†',
+  bodyStyleFa: 'سدان',
   dataConfidence: 'estimated',
 
   dimensions: {
@@ -74,7 +74,7 @@ export const pride131: VehicleProfile = {
 
   transmission: {
     kind: 'manual',
-    labelFa: 'Ø¯Ø³ØªÛŒ Ûµ Ø³Ø±Ø¹ØªÙ‡',
+    labelFa: 'دستی ۵ سرعته',
     gearRatios: [3.667, 2.043, 1.323, 0.943, 0.743],
     reverseRatio: 3.667,
     shiftTimeSec: 0.28,
@@ -126,15 +126,15 @@ export const pride131: VehicleProfile = {
     model: 'pride-131.glb',
     scale: 1,
     paints: [
-      { id: 'stock', nameFa: 'Ø³ÙÛŒØ¯ ØµØ¯ÙÛŒ', hex: '#eef1f2', metallic: 0.1, roughness: 0.35 },
-      { id: 'silver', nameFa: 'Ù†Ù‚Ø±Ù‡â€ŒØ§ÛŒ', hex: '#b9c0c6', metallic: 0.85, roughness: 0.28 },
-      { id: 'graphite', nameFa: 'Ø·ÙˆØ³ÛŒ Ú¯Ø±Ø§ÙÛŒØªÛŒ', hex: '#3d4348', metallic: 0.8, roughness: 0.3 },
-      { id: 'green', nameFa: 'Ø³Ø¨Ø² ØªÛŒØ±Ù‡', hex: '#1d3a31', metallic: 0.7, roughness: 0.3 },
-      { id: 'red', nameFa: 'Ù‚Ø±Ù…Ø²', hex: '#8f1d20', metallic: 0.5, roughness: 0.3 },
+      { id: 'stock', nameFa: 'سفید صدفی', hex: '#eef1f2', metallic: 0.1, roughness: 0.35 },
+      { id: 'silver', nameFa: 'نقره‌ای', hex: '#b9c0c6', metallic: 0.85, roughness: 0.28 },
+      { id: 'graphite', nameFa: 'طوسی گرافیتی', hex: '#3d4348', metallic: 0.8, roughness: 0.3 },
+      { id: 'green', nameFa: 'سبز تیره', hex: '#1d3a31', metallic: 0.7, roughness: 0.3 },
+      { id: 'red', nameFa: 'قرمز', hex: '#8f1d20', metallic: 0.5, roughness: 0.3 },
     ],
     rims: [
-      { id: 'stock', nameFa: 'ÙÙˆÙ„Ø§Ø¯ÛŒ', hex: '#9aa0a4' },
-      { id: 'alloy', nameFa: 'Ø¢Ù„ÛŒØ§Ú˜ÛŒ', hex: '#c6ccd0' },
+      { id: 'stock', nameFa: 'فولادی', hex: '#9aa0a4' },
+      { id: 'alloy', nameFa: 'آلیاژی', hex: '#c6ccd0' },
     ],
     wheelAnchors: [
       [-0.695, 0.286, 1.171],
@@ -154,6 +154,6 @@ export const pride131: VehicleProfile = {
 
   sources: [
     { label: 'Saipa Pride 131 overview (Wikipedia)', url: 'https://en.wikipedia.org/wiki/Saipa_Pride', confidence: 'estimated' },
-    { label: 'Pride 131 technical sheet â€” 1.3L 8V, 5MT, 895 kg', confidence: 'estimated', note: 'Iranian market data varies by year; figures normalised to 2008 LX' },
+    { label: 'Pride 131 technical sheet — 1.3L 8V, 5MT, 895 kg', confidence: 'estimated', note: 'Iranian market data varies by year; figures normalised to 2008 LX' },
   ],
 };

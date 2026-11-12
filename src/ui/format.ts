@@ -34,9 +34,11 @@ export function formatNumber(value: number, fractionDigits = 0): string {
   if (!Number.isFinite(value)) return digits('—');
   const fixed = Math.abs(value).toFixed(fractionDigits);
   const [intPart = '0', fracPart] = fixed.split('.');
-  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '٬');
+  const sep = digitMode === 'fa' ? '٬' : ',';
+  const decimal = digitMode === 'fa' ? '٫' : '.';
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, sep);
   const sign = value < 0 ? '−' : '';
-  return digits(fracPart ? `${sign}${grouped}٫${fracPart}` : `${sign}${grouped}`);
+  return digits(fracPart ? `${sign}${grouped}${decimal}${fracPart}` : `${sign}${grouped}`);
 }
 
 export function formatSpeed(kmh: number): string {

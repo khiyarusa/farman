@@ -1,0 +1,10 @@
+﻿import { chromium } from "playwright";
+const browser = await chromium.launch({ channel: "msedge" });
+const page = await browser.newPage({ viewport: { width: 1280, height: 640 } });
+await page.goto("http://127.0.0.1:5188/", { waitUntil: "networkidle" });
+await page.waitForTimeout(1500);
+await page.locator(".menu-nav .menu-item").nth(1).click();
+await page.waitForTimeout(2500);
+const text = await page.locator(".garage-specs").innerText();
+console.log(JSON.stringify(text.slice(0, 500)));
+await browser.close();

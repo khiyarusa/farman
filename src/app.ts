@@ -22,6 +22,7 @@ import { settingsScreen } from './ui/screens/settings';
 import { confirmOverlay, helpScreen, pauseOverlay, resultsOverlay, tutorialOverlay } from './ui/screens/overlays';
 import { getMission, type MissionDef } from './missions/definitions';
 import { MissionManager, type MissionResult } from './missions/manager';
+import { TrafficSystem } from './traffic/traffic';
 import { FA } from './ui/i18n';
 import { el } from './ui/dom';
 import { formatNumber, setDigitMode } from './ui/format';
@@ -49,6 +50,7 @@ export class App {
   private keyboard: KeyboardInput | null = null;
   private missionRunner: MissionManager | null = null;
   private mission: MissionDef | null = null;
+  private traffic: TrafficSystem | null = null;
   private loop = new FixedStepLoop();
   private mode: 'boot' | 'menu' | 'drive' | 'loading' = 'boot';
   private paused = false;
@@ -96,14 +98,14 @@ export class App {
   }
 
   async boot(onStatus: (text: string, fraction: number) => void): Promise<void> {
-    onStatus('Ã˜Â±Ã˜Â§Ã™â€¡Ã¢â‚¬Å’Ã˜Â§Ã™â€ Ã˜Â¯Ã˜Â§Ã˜Â²Ã›Å’ Ã™â€¦Ã™Ë†Ã˜ÂªÃ™Ë†Ã˜Â± Ã™ÂÃ›Å’Ã˜Â²Ã›Å’ÃšÂ©', 0.25);
+    onStatus('راه‌اندازی موتور فیزیک', 0.25);
     this.physics = await PhysicsWorld.create();
-    onStatus('Ã˜Â³Ã˜Â§Ã˜Â®Ã˜Âª ÃšÂ¯Ã˜Â§Ã˜Â±Ã˜Â§ÃšËœ', 0.6);
+    onStatus('ساخت گاراژ', 0.6);
     this.studio = new StudioScene(this.renderer.engine);
     this.renderer.setScene(this.studio.scene);
     this.renderer.start(() => this.frame());
     await this.studio.setVehicle(this.selectedProfile, this.paintOf(this.selectedProfile), this.rimOf(this.selectedProfile));
-    onStatus('Ã˜Â¢Ã™â€¦Ã˜Â§Ã˜Â¯Ã™â€¡', 1);
+    onStatus('آماده', 1);
     this.goMenu();
     this.tryDetectNative();
   }
@@ -294,6 +296,12 @@ export class App {
     this.vehicleView = await world.createVehicleView(profile, this.paintOf(profile), this.rimOf(profile));
     world.setWeather(this.mission?.weather ?? 'dry');
 
+    if (world.data) {
+      this.traffic = new TrafficSystem(world.scene, this.physics, world.data);
+      await this.traffic.load(this.mission ? 0.4 : 1);
+      this.traffic.attachBodies();
+    }
+
     this.hud = new Hud(profile, this.mission);
     this.hud.setTelemetryVisible(this.save.settings.showTelemetry);
     this.ui.setHud(this.hud.root);
@@ -349,12 +357,12 @@ export class App {
     switch (action) {
       case 'shiftUp': {
         const result = vehicle.shift(1);
-        if (result === 'needClutch') this.hud?.toast('Ã˜Â¨Ã˜Â±Ã˜Â§Ã›Å’ Ã˜ÂªÃ˜Â¹Ã™Ë†Ã›Å’Ã˜Â¶ Ã˜Â¯Ã™â€ Ã˜Â¯Ã™â€¡Ã˜Å’ ÃšÂ©Ã™â€žÃ˜Â§Ãšâ€  Ã˜Â±Ã˜Â§ Ã˜Â¨ÃšÂ¯Ã›Å’Ã˜Â±');
+        if (result === 'needClutch') this.hud?.toast('برای تعویض دنده، کلاچ را بگیر');
         break;
       }
       case 'shiftDown': {
         const result = vehicle.shift(-1);
-        if (result === 'needClutch') this.hud?.toast('Ã˜Â¨Ã˜Â±Ã˜Â§Ã›Å’ Ã˜ÂªÃ˜Â¹Ã™Ë†Ã›Å’Ã˜Â¶ Ã˜Â¯Ã™â€ Ã˜Â¯Ã™â€¡Ã˜Å’ ÃšÂ©Ã™â€žÃ˜Â§Ãšâ€  Ã˜Â±Ã˜Â§ Ã˜Â¨ÃšÂ¯Ã›Å’Ã˜Â±');
+        if (result === 'needClutch') this.hud?.toast('برای تعویض دنده، کلاچ را بگیر');
         break;
       }
       case 'selector': {
@@ -362,13 +370,13 @@ export class App {
           vehicle.selectGear(0);
         } else {
           const next = vehicle.cycleSelector();
-          this.hud?.toast(`Ã˜Â¯Ã™â€ Ã˜Â¯Ã™â€¡ ${next}`);
+          this.hud?.toast(`دنده ${next}`);
         }
         break;
       }
       case 'camera': {
         const mode = this.world?.camera.cycle();
-        this.hud?.toast(mode === 'chase' ? 'Ã˜Â¯Ã™Ë†Ã˜Â±Ã˜Â¨Ã›Å’Ã™â€  Ã˜ÂªÃ˜Â¹Ã™â€šÃ›Å’Ã˜Â¨' : mode === 'close' ? 'Ã˜Â¯Ã™Ë†Ã˜Â±Ã˜Â¨Ã›Å’Ã™â€  Ã™â€ Ã˜Â²Ã˜Â¯Ã›Å’ÃšÂ©' : 'Ã˜Â¯Ã™Ë†Ã˜Â±Ã˜Â¨Ã›Å’Ã™â€  ÃšÂ©Ã˜Â§Ã˜Â¨Ã›Å’Ã™â€ ');
+        this.hud?.toast(mode === 'chase' ? 'دوربین تعقیب' : mode === 'close' ? 'دوربین نزدیک' : 'دوربین کابین');
         break;
       }
       case 'pause':
@@ -410,6 +418,7 @@ export class App {
     const surface = world.surface;
     for (let i = 0; i < steps; i++) {
       vehicle.step(PHYSICS.dt, surface);
+      this.traffic?.step(PHYSICS.dt, { x: vehicle.position.x, z: vehicle.position.z }, Math.abs(vehicle.speedMs));
       this.physics.step();
       this.missionRunner?.update(PHYSICS.dt, vehicle.telemetry);
     }
@@ -421,7 +430,7 @@ export class App {
       this.hud.mapOrigin = { x: vehicle.position.x, z: vehicle.position.z, yaw: vehicle.yaw };
       const left = this.missionRunner?.timeLeft;
       if (left !== null && left !== undefined) {
-        this.hud.setObjectiveMeta(`Ã˜Â²Ã™â€¦Ã˜Â§Ã™â€ : ${formatNumber(left, 1)} Ã˜Â«Ã˜Â§Ã™â€ Ã›Å’Ã™â€¡`);
+        this.hud.setObjectiveMeta(`زمان: ${formatNumber(left, 1)} ثانیه`);
       } else if (this.missionRunner) {
         this.hud.setObjectiveMeta(this.missionRunner.objectiveText);
       }
@@ -540,6 +549,8 @@ export class App {
     this.keyboard = null;
     this.vehicleView?.dispose();
     this.vehicleView = null;
+    this.traffic?.dispose();
+    this.traffic = null;
     this.vehicle?.dispose();
     this.vehicle = null;
     this.hud?.dispose();
@@ -576,7 +587,7 @@ export class App {
   requestExit(): void {
     if (!this.isNative) {
       this.ui.openOverlay(
-        confirmOverlay(FA.exitTitle, 'Ã˜Â¨Ã˜Â±Ã˜Â§Ã›Å’ Ã˜Â¨Ã˜Â³Ã˜ÂªÃ™â€  Ã˜Â¨Ã˜Â§Ã˜Â²Ã›Å’Ã˜Å’ Ã™â€¦Ã˜Â±Ã™Ë†Ã˜Â±ÃšÂ¯Ã˜Â± Ã›Å’Ã˜Â§ Ã˜ÂªÃ˜Â¨ Ã˜Â±Ã˜Â§ Ã˜Â¨Ã˜Â¨Ã™â€ Ã˜Â¯.', FA.close, () => this.ui.closeOverlay(), () => this.ui.closeOverlay()),
+        confirmOverlay(FA.exitTitle, 'برای بستن بازی، مرورگر یا تب را ببند.', FA.close, () => this.ui.closeOverlay(), () => this.ui.closeOverlay()),
       );
       return;
     }

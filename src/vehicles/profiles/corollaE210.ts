@@ -1,7 +1,7 @@
 import type { VehicleProfile } from '../profile';
 
 /**
- * Toyota Corolla 2.0 CVT (E210, US LE) â€” an international front-wheel-drive
+ * Toyota Corolla 2.0 CVT (E210, US LE) — an international front-wheel-drive
  * automatic whose K120 gearbox is a belt CVT, not a stepped automatic.
  */
 export const corollaE210: VehicleProfile = {
@@ -11,9 +11,9 @@ export const corollaE210: VehicleProfile = {
   trim: '2.0 LE (E210)',
   year: 2021,
   market: 'North America',
-  nameFa: 'ØªÙˆÛŒÙˆØªØ§ Ú©Ø±ÙˆÙ„Ø§ Û².Û°',
+  nameFa: 'تویوتا کرولا ۲.۰',
   nameEn: 'Toyota Corolla 2.0 CVT',
-  bodyStyleFa: 'Ø³Ø¯Ø§Ù†',
+  bodyStyleFa: 'سدان',
   dataConfidence: 'estimated',
 
   dimensions: {
@@ -128,15 +128,15 @@ export const corollaE210: VehicleProfile = {
     model: 'corolla-e210.glb',
     scale: 1,
     paints: [
-      { id: 'stock', nameFa: 'Ø³ÙÛŒØ¯ Ù…Ø±ÙˆØ§Ø±ÛŒØ¯', hex: '#f2f4f3', metallic: 0.25, roughness: 0.3 },
-      { id: 'celestite', nameFa: 'Ø®Ø§Ú©Ø³ØªØ±ÛŒ Ø¢Ø¨ÛŒ', hex: '#7f8c93', metallic: 0.85, roughness: 0.26 },
-      { id: 'black', nameFa: 'Ù…Ø´Ú©ÛŒ', hex: '#15181a', metallic: 0.6, roughness: 0.22 },
-      { id: 'blue', nameFa: 'Ø¢Ø¨ÛŒ Ø§Ù‚ÛŒØ§Ù†ÙˆØ³ÛŒ', hex: '#1d3a55', metallic: 0.8, roughness: 0.26 },
-      { id: 'red', nameFa: 'Ù‚Ø±Ù…Ø²', hex: '#9c2228', metallic: 0.55, roughness: 0.28 },
+      { id: 'stock', nameFa: 'سفید مروارید', hex: '#f2f4f3', metallic: 0.25, roughness: 0.3 },
+      { id: 'celestite', nameFa: 'خاکستری آبی', hex: '#7f8c93', metallic: 0.85, roughness: 0.26 },
+      { id: 'black', nameFa: 'مشکی', hex: '#15181a', metallic: 0.6, roughness: 0.22 },
+      { id: 'blue', nameFa: 'آبی اقیانوسی', hex: '#1d3a55', metallic: 0.8, roughness: 0.26 },
+      { id: 'red', nameFa: 'قرمز', hex: '#9c2228', metallic: 0.55, roughness: 0.28 },
     ],
     rims: [
-      { id: 'stock', nameFa: 'Ø¢Ù„ÛŒØ§Ú˜ÛŒ Ú©Ø§Ø±Ø®Ø§Ù†Ù‡', hex: '#c3c8cc' },
-      { id: 'sport', nameFa: 'Ø§Ø³Ù¾Ø±Øª', hex: '#8e959b' },
+      { id: 'stock', nameFa: 'آلیاژی کارخانه', hex: '#c3c8cc' },
+      { id: 'sport', nameFa: 'اسپرت', hex: '#8e959b' },
     ],
     wheelAnchors: [
       [-0.765, 0.316, 1.35],

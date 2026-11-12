@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: ['main', 'agent/**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Typecheck, lint, tests, web build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: TypeScript strict check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit and integration tests
+        run: npm test
+
+      - name: Production web build
+        run: npx vite build
+
+      - name: Verify the bundle has no remote runtime dependencies
+        run: |
+          if grep -RIn --include='*.js' -E 'https?://(cdn|unpkg|jsdelivr|fonts\.googleapis)' dist/assets | grep -v 'sourceMappingURL' | head -20; then
+            echo "::error::Remote runtime dependency found in the bundle"
+            exit 1
+          fi
+          echo "No remote runtime dependencies found."
+
+      - name: Upload web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: farman-web
+          path: dist
+          retention-days: 14

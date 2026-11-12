@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'android/**', 'node_modules/**', 'tools/assetgen/**', 'docs/**', '.agents/**'],
+    ignores: ['dist/**', 'android/**', 'node_modules/**', 'tools/assetgen/**', 'tools/qa/**', 'tools/*.py', 'docs/**', '.agents/**', '.zwork/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -18,6 +18,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': ['warn', { allow: ['warn', 'error', 'info', 'debug'] }],
       eqeqeq: ['error', 'always'],
+      'no-irregular-whitespace': ['error', { skipStrings: true, skipTemplates: true, skipComments: true, skipRegExps: true }],
       'prefer-const': 'error',
     },
   },

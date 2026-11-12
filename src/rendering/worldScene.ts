@@ -64,6 +64,9 @@ export class WorldScene {
   private roadSamples: Array<{ x: number; z: number; width: number; kind: WorldRoad['kind']; points: [number, number, number][] }> = [];
   private wetness = 0;
   private heightSampler: ((x: number, z: number) => number) | null = null;
+  private roadSegments: Array<{ ax: number; ay: number; az: number; bx: number; by: number; bz: number; half: number; kind: WorldRoad['kind'] }> = [];
+  private roadGrid = new Map<string, number[]>();
+  private readonly gridCell = 40;
   readonly isFallback: boolean;
 
   constructor(
@@ -80,13 +83,13 @@ export class WorldScene {
 
     this.env = setupEnvironment(scene, {
       skyTexture: './assets/textures/sky-day.png',
-      palette: { top: '#5d87ad', horizon: '#c9d6dd', ground: '#4a4238', sun: '#fff3d6' },
-      sunDirection: new Vector3(-0.55, -1, -0.42),
-      sunIntensity: 3.1,
-      ambientIntensity: 0.55,
+      palette: { top: '#3f6f96', horizon: '#a9bcc7', ground: '#4a4238', sun: '#fff3d6' },
+      sunDirection: new Vector3(0.42, -1, -0.72),
+      sunIntensity: 2.6,
+      ambientIntensity: 0.18,
       shadowMapSize: settings.graphics === 'high' ? 2048 : settings.graphics === 'balanced' ? 1024 : 512,
       shadowDistance: 60,
-      fog: { color: '#c2cfd5', density: 0.0016 },
+      fog: { color: '#9fb6c4', density: 0.00045 },
     });
     this.camera = new CameraRig(scene);
     void this.quality;
@@ -128,7 +131,14 @@ export class WorldScene {
           return heights[iz * n + ix] ?? 0;
         };
         const scale = { x: size, y: 1, z: size };
-        this.physics.addHeightfield(heights, n - 1, n - 1, scale, 1.0);
+        // Rapier heightfields are column-major; our file is row-major (z rows).
+        const transposed = new Float32Array(n * n);
+        for (let i = 0; i < n; i++) {
+          for (let j = 0; j < n; j++) {
+            transposed[j * n + i] = heights[i * n + j] as number;
+          }
+        }
+        this.physics.addHeightfield(transposed, n - 1, n - 1, scale, 1.0);
       } catch (err) {
         console.warn('[world] heightfield failed', err);
       }
@@ -146,7 +156,12 @@ export class WorldScene {
           mesh.isPickable = false;
           mesh.receiveShadows = mesh.name.includes('terrain') || mesh.name.includes('road');
           this.roadMeshes.push(mesh);
-          if (kind === 'roads' || kind === 'barriers') this.addMeshCollider(mesh);
+          if (kind === 'roads' || kind === 'barriers' || kind === 'props') {
+            if (!mesh.name.includes('markings')) this.addMeshCollider(mesh);
+          }
+          if (kind === 'props' || kind === 'vegetation') {
+            this.env.shadows.addShadowCaster(mesh, true);
+          }
         }
       } catch (err) {
         console.warn(`[world] model ${file} failed to load`, err);
@@ -155,6 +170,7 @@ export class WorldScene {
     }
 
     this.buildRoadSamples(data.roads);
+    this.buildRoadIndex(data.roads);
     onProgress(0.95, 'آماده‌سازی ترافیک');
     if (!this.roadMeshes.length) this.buildFallbackPad();
     onProgress(1, 'آماده');
@@ -186,6 +202,70 @@ export class WorldScene {
       kind: r.kind,
       points: r.points,
     }));
+  }
+
+  /** Spatial hash of road segments, used for height queries and surface type. */
+  private buildRoadIndex(roads: WorldRoad[]): void {
+    this.roadSegments = [];
+    this.roadGrid.clear();
+    for (const road of roads) {
+      for (let i = 1; i < road.points.length; i++) {
+        const a = road.points[i - 1] as [number, number, number];
+        const b = road.points[i] as [number, number, number];
+        const index = this.roadSegments.length;
+        this.roadSegments.push({
+          ax: a[0], ay: a[1], az: a[2],
+          bx: b[0], by: b[1], bz: b[2],
+          half: road.width / 2 + 0.4,
+          kind: road.kind,
+        });
+        const minX = Math.min(a[0], b[0]) - this.gridCell;
+        const maxX = Math.max(a[0], b[0]) + this.gridCell;
+        const minZ = Math.min(a[2], b[2]) - this.gridCell;
+        const maxZ = Math.max(a[2], b[2]) + this.gridCell;
+        for (let gx = Math.floor(minX / this.gridCell); gx <= Math.floor(maxX / this.gridCell); gx++) {
+          for (let gz = Math.floor(minZ / this.gridCell); gz <= Math.floor(maxZ / this.gridCell); gz++) {
+            const key = `${gx}:${gz}`;
+            const bucket = this.roadGrid.get(key);
+            if (bucket) bucket.push(index);
+            else this.roadGrid.set(key, [index]);
+          }
+        }
+      }
+    }
+  }
+
+  /** Nearest road surface under a point, or null when off-road. */
+  private roadUnder(x: number, z: number): { y: number; kind: WorldRoad['kind'] } | null {
+    const gx = Math.floor(x / this.gridCell);
+    const gz = Math.floor(z / this.gridCell);
+    let bestDist = Infinity;
+    let bestY = 0;
+    let bestKind: WorldRoad['kind'] = 'urban';
+    for (let ix = gx - 1; ix <= gx + 1; ix++) {
+      for (let iz = gz - 1; iz <= gz + 1; iz++) {
+        const bucket = this.roadGrid.get(`${ix}:${iz}`);
+        if (!bucket) continue;
+        for (const index of bucket) {
+          const s = this.roadSegments[index] as (typeof this.roadSegments)[number];
+          const dx = s.bx - s.ax;
+          const dz = s.bz - s.az;
+          const len2 = dx * dx + dz * dz;
+          if (len2 < 0.0001) continue;
+          let t = ((x - s.ax) * dx + (z - s.az) * dz) / len2;
+          t = Math.max(0, Math.min(1, t));
+          const px = s.ax + dx * t;
+          const pz = s.az + dz * t;
+          const d = Math.hypot(x - px, z - pz);
+          if (d < s.half && d < bestDist) {
+            bestDist = d;
+            bestY = s.ay + (s.by - s.ay) * t;
+            bestKind = s.kind;
+          }
+        }
+      }
+    }
+    return bestDist < Infinity ? { y: bestY, kind: bestKind } : null;
   }
 
   /** Flat test pad used before the generated world exists. */
@@ -275,7 +355,7 @@ export class WorldScene {
 
   setWeather(kind: 'dry' | 'rain'): void {
     this.wetness = kind === 'rain' ? 1 : 0;
-    this.scene.fogDensity = kind === 'rain' ? 0.006 : 0.0016;
+    this.scene.fogDensity = kind === 'rain' ? 0.0035 : 0.00045;
     this.scene.fogColor = Color3.FromHexString(kind === 'rain' ? '#8e9aa0' : '#c2cfd5');
     this.scene.clearColor = Color4.FromHexString(kind === 'rain' ? '#5d666bff' : '#c9d6ddff');
   }
@@ -307,10 +387,14 @@ export class WorldScene {
       heightAt,
       normalAt,
       sample: (x: number, z: number) => {
-        for (const road of roads) {
-          const half = (road.width / 2) * 1.15;
-          if (this.distanceToPolyline(x, z, road.points) < half) {
-            return { kind: (road.kind === 'tunnel' ? 'tunnel' : 'asphalt') as SurfaceKind, wet };
+        const road = this.roadUnder(x, z);
+        if (road) {
+          return { kind: (road.kind === 'tunnel' ? 'tunnel' : 'asphalt') as SurfaceKind, wet };
+        }
+        for (const r of roads) {
+          const half = (r.width / 2) * 1.15;
+          if (this.distanceToPolyline(x, z, r.points) < half) {
+            return { kind: (r.kind === 'tunnel' ? 'tunnel' : 'asphalt') as SurfaceKind, wet };
           }
         }
         return { kind: 'dirt' as SurfaceKind, wet: wet * 0.4 };
@@ -337,6 +421,8 @@ export class WorldScene {
   }
 
   groundHeightAt(x: number, z: number): number {
+    const road = this.roadUnder(x, z);
+    if (road) return road.y + 0.02;
     if (this.heightSampler) return this.heightSampler(x, z);
     return 0;
   }

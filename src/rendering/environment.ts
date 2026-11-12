@@ -49,8 +49,11 @@ export function createSkyDome(scene: Scene, textureUrl: string, diameter = 2400)
   mat.specularColor = Color3.Black();
   const tex = new Texture(textureUrl, scene, false, false, Texture.TRILINEAR_SAMPLINGMODE);
   tex.gammaSpace = true;
+  // Babylon sphere UVs point the other way round from an equirect sky map.
+  tex.vScale = -1;
+  tex.vOffset = 1;
   mat.emissiveTexture = tex;
-  mat.emissiveColor = new Color3(1, 1, 1);
+  mat.emissiveColor = new Color3(0.52, 0.60, 0.70);
   mat.diffuseColor = Color3.Black();
   sky.material = mat;
   sky.applyFog = false;
@@ -164,7 +167,7 @@ export function setupEnvironment(scene: Scene, opts: EnvironmentOptions): Enviro
   const sun = new DirectionalLight('sun', opts.sunDirection.normalize(), scene);
   sun.intensity = opts.sunIntensity;
   sun.diffuse = hexToColor(opts.palette.sun);
-  sun.specular = hexToColor(opts.palette.sun);
+  sun.specular = hexToColor(opts.palette.sun).scale(0.8);
   sun.shadowMinZ = 1;
   sun.shadowMaxZ = 240;
   sun.position = new Vector3(-60, 90, -60);
@@ -186,8 +189,8 @@ export function setupEnvironment(scene: Scene, opts: EnvironmentOptions): Enviro
   const ip = scene.imageProcessingConfiguration;
   ip.toneMappingEnabled = true;
   ip.toneMappingType = ImageProcessingConfiguration.TONEMAPPING_ACES;
-  ip.exposure = 1.05;
-  ip.contrast = 1.06;
+  ip.exposure = 0.92;
+  ip.contrast = 1.14;
   ip.vignetteEnabled = false;
 
   scene.skipPointerMovePicking = true;

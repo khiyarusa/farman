@@ -1,7 +1,7 @@
 import type { VehicleProfile } from '../profile';
 
 /**
- * BMW 320i (G20) â€” rear-wheel drive, 2.0 turbocharged four, ZF 8HP torque-converter
+ * BMW 320i (G20) — rear-wheel drive, 2.0 turbocharged four, ZF 8HP torque-converter
  * automatic. Deliberately included so that RWD behaviour is a first-class case.
  */
 export const bmw320i: VehicleProfile = {
@@ -11,9 +11,9 @@ export const bmw320i: VehicleProfile = {
   trim: 'G20 Sport Line',
   year: 2021,
   market: 'Europe',
-  nameFa: 'Ø¨ÛŒâ€ŒØ§Ù…â€ŒÙˆ Û³Û²Û°i',
+  nameFa: 'بی‌ام‌و ۳۲۰i',
   nameEn: 'BMW 320i G20',
-  bodyStyleFa: 'Ø³Ø¯Ø§Ù†',
+  bodyStyleFa: 'سدان',
   dataConfidence: 'estimated',
 
   dimensions: {
@@ -74,7 +74,7 @@ export const bmw320i: VehicleProfile = {
 
   transmission: {
     kind: 'torqueConverter',
-    labelFa: 'Ø§ØªÙˆÙ…Ø§ØªÛŒÚ© Û¸ Ø³Ø±Ø¹ØªÙ‡',
+    labelFa: 'اتوماتیک ۸ سرعته',
     gearRatios: [5.0, 3.2, 2.143, 1.72, 1.314, 1.0, 0.822, 0.64],
     reverseRatio: 3.456,
     shiftTimeSec: 0.18,
@@ -128,15 +128,15 @@ export const bmw320i: VehicleProfile = {
     model: 'bmw-320i.glb',
     scale: 1,
     paints: [
-      { id: 'stock', nameFa: 'Ø³ÙÛŒØ¯ Ø¢Ù„Ù¾Ø§ÛŒÙ†', hex: '#f0f2f2', metallic: 0.2, roughness: 0.28 },
-      { id: 'graphite', nameFa: 'Ø®Ø§Ú©Ø³ØªØ±ÛŒ Ù…Ø¹Ø¯Ù†ÛŒ', hex: '#4a5055', metallic: 0.9, roughness: 0.24 },
-      { id: 'black', nameFa: 'Ù…Ø´Ú©ÛŒ Ø¨Ø±Ø§Ù‚', hex: '#101314', metallic: 0.7, roughness: 0.2 },
-      { id: 'blue', nameFa: 'Ø¢Ø¨ÛŒ ØªÛŒØ±Ù‡', hex: '#1b3a5a', metallic: 0.85, roughness: 0.24 },
-      { id: 'green', nameFa: 'Ø³Ø¨Ø² Ú©Ø§Ø±Ø®Ø§Ù†Ù‡', hex: '#1f3b33', metallic: 0.8, roughness: 0.26 },
+      { id: 'stock', nameFa: 'سفید آلپاین', hex: '#f0f2f2', metallic: 0.2, roughness: 0.28 },
+      { id: 'graphite', nameFa: 'خاکستری معدنی', hex: '#4a5055', metallic: 0.9, roughness: 0.24 },
+      { id: 'black', nameFa: 'مشکی براق', hex: '#101314', metallic: 0.7, roughness: 0.2 },
+      { id: 'blue', nameFa: 'آبی تیره', hex: '#1b3a5a', metallic: 0.85, roughness: 0.24 },
+      { id: 'green', nameFa: 'سبز کارخانه', hex: '#1f3b33', metallic: 0.8, roughness: 0.26 },
     ],
     rims: [
-      { id: 'stock', nameFa: 'Ø¢Ù„ÛŒØ§Ú˜ÛŒ Û±Û¸ Ø§ÛŒÙ†Ú†', hex: '#c0c6cb' },
-      { id: 'sport', nameFa: 'Ø§Ø³Ù¾Ø±Øª ØªÛŒØ±Ù‡', hex: '#7c838a' },
+      { id: 'stock', nameFa: 'آلیاژی ۱۸ اینچ', hex: '#c0c6cb' },
+      { id: 'sport', nameFa: 'اسپرت تیره', hex: '#7c838a' },
     ],
     wheelAnchors: [
       [-0.7935, 0.33, 1.4255],

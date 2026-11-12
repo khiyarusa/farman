@@ -45,7 +45,7 @@ export class Hud {
 
     const hudTop = el('div', { class: 'hud-top' }, objective, minimapWrap);
 
-    this.speedEl = el('div', { class: 'value num', text: 'Û°' });
+    this.speedEl = el('div', { class: 'value num', text: '۰' });
     const speed = el('div', { class: 'hud-speed' }, this.speedEl, el('div', { class: 'unit', text: 'km/h' }));
 
     this.gearEl = el('div', { class: 'g', text: 'N' });
@@ -64,12 +64,12 @@ export class Hud {
     `;
     this.tachNeedle = tachSvg.querySelector('#needle') as SVGGElement;
     const tachWrap = el('div', { class: 'hud-tach' }, tachSvg);
-    this.tachValue = el('div', { class: 'mute num', style: 'font-size:0.6rem;text-align:center;margin-top:-0.3rem', text: 'Û°' });
+    this.tachValue = el('div', { class: 'mute num', style: 'font-size:0.6rem;text-align:center;margin-top:-0.3rem', text: '۰' });
 
     this.fuelBar = el('span');
     this.tempBar = el('span');
-    this.fuelLabel = el('span', { class: 'num', text: 'â€”' });
-    this.tempLabel = el('span', { class: 'num', text: 'â€”' });
+    this.fuelLabel = el('span', { class: 'num', text: '—' });
+    this.tempLabel = el('span', { class: 'num', text: '—' });
     const gauges = el(
       'div',
       { class: 'hud-gauges' },
@@ -144,7 +144,7 @@ export class Hud {
     const tempRatio = Math.max(0, Math.min(1, (t.coolantC - 40) / 80));
     this.tempBar.style.width = `${tempRatio * 100}%`;
     this.tempBar.style.background = t.coolantC > 112 ? 'var(--danger)' : t.coolantC < 60 ? 'var(--warn)' : 'var(--accent)';
-    this.tempLabel.textContent = `${formatNumber(Math.round(t.coolantC))}Â°`;
+    this.tempLabel.textContent = `${formatNumber(Math.round(t.coolantC))}°`;
 
     this.flags.abs.classList.toggle('is-on', t.absActive);
     this.flags.tcs.classList.toggle('is-on', t.tcsActive);
@@ -163,7 +163,7 @@ export class Hud {
 
     if (this.telemetryRows.style.display !== 'none') {
       this.telemetryRows.innerHTML = [
-        `RPM ${formatNumber(Math.round(t.rpm))} Â· ${formatNumber(Math.round(t.engineTorque))} NÂ·m`,
+        `RPM ${formatNumber(Math.round(t.rpm))} · ${formatNumber(Math.round(t.engineTorque))} N·m`,
         `SLIP ${t.wheels.map((w) => formatNumber(w.slipRatio, 2)).join(' / ')}`,
         `FZ ${t.wheels.map((w) => formatNumber(Math.round(w.normalForce))).join(' / ')}`,
         `SUS ${t.wheels.map((w) => formatNumber(w.travelOffset * 100, 1)).join(' / ')}`,

@@ -69,7 +69,7 @@ export class UIRoot {
   }
 }
 
-export interface GameHost extends App {}
+export type GameHost = App;
 
 /** Full-screen shell with a title bar and scrollable body. */
 export function shell(opts: {

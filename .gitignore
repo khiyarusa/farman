@@ -41,3 +41,7 @@ npm-debug.log*
 .env.*
 !.env.example
 *.pem
+
+# Tool runtime artifacts
+.zwork/
+
