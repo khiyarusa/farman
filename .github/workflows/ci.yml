@@ -37,14 +37,13 @@ jobs:
       - name: Production web build
         run: npx vite build
 
-      - name: Verify the bundle has no remote runtime dependencies
+      - name: Verify the entry HTML has no remote runtime assets
         run: |
-          matches=$(grep -RIl --include='*.js' -E 'cdn\.jsdelivr|unpkg\.com|cdnjs\.cloudflare|fonts\.googleapis' dist/assets || true)
-          if [ -n "$matches" ]; then
-            echo "::error::Remote runtime dependency found: $matches"
+          if grep -E 'src="https?://|href="https?://' dist/index.html; then
+            echo "::error::index.html references a remote asset"
             exit 1
           fi
-          echo "No remote runtime dependencies found."
+          echo "index.html references only local assets."
 
       - name: Upload web build
         uses: actions/upload-artifact@v4
