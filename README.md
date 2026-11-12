@@ -1,4 +1,9 @@
-# FARMAN — فرمان
+# FARMAN · فرمان
+
+[![CI](https://github.com/khiyarusa/farman/actions/workflows/ci.yml/badge.svg)](https://github.com/khiyarusa/farman/actions/workflows/ci.yml)
+[![Android](https://github.com/khiyarusa/farman/actions/workflows/android.yml/badge.svg)](https://github.com/khiyarusa/farman/actions/workflows/android.yml)
+
+> **Download:** [FARMAN v0.1.2 debug APK](https://github.com/khiyarusa/farman/releases/tag/v0.1.2) · preview build, debug-signed.
 
 **Persian-first, offline-first Android driving simulation.** One connected region, three
 cars that do not drive alike, and a UI written in Persian rather than translated into it.
