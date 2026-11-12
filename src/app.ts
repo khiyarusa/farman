@@ -69,6 +69,11 @@ export class App {
     this.physics = null as unknown as PhysicsWorld;
     this.applyUiScale();
     this.lastFrame = performance.now();
+    const persist = (): void => this.saveStore.flush();
+    window.addEventListener('pagehide', persist);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') persist();
+    });
   }
 
   get save() {

@@ -1,0 +1,50 @@
+import {
+  GetFlowGraphAssetWithType
+} from "./chunk-YPN2AXKP.js";
+import {
+  getNumericValue
+} from "./chunk-RH3T4P6D.js";
+import {
+  FlowGraphBlock,
+  FlowGraphInteger,
+  RichTypeAny
+} from "./chunk-C6RQ3N4C.js";
+import "./chunk-6CCHNGZY.js";
+import "./chunk-VRSVNNT2.js";
+import "./chunk-KH7OXBY7.js";
+import "./chunk-WNRGLLCG.js";
+import "./chunk-7SFGFRN6.js";
+import "./chunk-PUA2HRJM.js";
+import {
+  RegisterClass
+} from "./chunk-KITXCBO2.js";
+import "./chunk-PVI5UHGD.js";
+
+// node_modules/@babylonjs/core/FlowGraph/Blocks/Data/flowGraphGetAssetBlock.js
+var FlowGraphGetAssetBlock = class extends FlowGraphBlock {
+  constructor(config) {
+    super(config);
+    this.config = config;
+    this.type = this.registerDataInput("type", RichTypeAny, config.type);
+    this.value = this.registerDataOutput("value", RichTypeAny);
+    this.index = this.registerDataInput("index", RichTypeAny, new FlowGraphInteger(getNumericValue(config.index ?? -1)));
+  }
+  _updateOutputs(context) {
+    const type = this.type.getValue(context);
+    const index = this.index.getValue(context);
+    const asset = GetFlowGraphAssetWithType(context.assetsContext, type, getNumericValue(index), this.config.useIndexAsUniqueId);
+    this.value.setValue(asset, context);
+  }
+  /**
+   * Gets the class name of this block
+   * @returns the class name
+   */
+  getClassName() {
+    return "FlowGraphGetAssetBlock";
+  }
+};
+RegisterClass("FlowGraphGetAssetBlock", FlowGraphGetAssetBlock);
+export {
+  FlowGraphGetAssetBlock
+};
+//# sourceMappingURL=flowGraphGetAssetBlock-D5DV4DZP.js.map

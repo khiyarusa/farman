@@ -32,6 +32,9 @@ export function resultsOverlay(app: App, result: MissionResult, mission: Mission
     el('div', { class: 'divider' }),
     el('div', { class: 'result-score num', text: formatNumber(result.score) }),
     el('div', { class: 'mute', style: 'font-size:0.72rem;margin-top:-0.3rem', text: FA.score }),
+    ...(result.reward > 0
+      ? [el('div', { class: 'pill', style: 'margin-top:0.5rem;align-self:flex-start', text: `${FA.reward}: ${formatNumber(result.reward / 1_000_000)} م` })]
+      : []),
     el('div', { class: 'divider' }),
     statRow(FA.time, `${formatNumber(result.elapsedSec, 1)} s`),
     statRow(FA.distance, `${formatNumber(result.distanceKm, 2)} ${FA.km}`),
@@ -46,12 +49,6 @@ export function resultsOverlay(app: App, result: MissionResult, mission: Mission
       el('button', { class: 'btn btn--ghost', style: 'flex:1', text: FA.exitToMenu, on: { click: () => app.exitDrive() } }),
     ),
   );
-  if (result.reward > 0) {
-    panel.insertBefore(
-      el('div', { class: 'pill', style: 'align-self:flex-start;margin-top:0.4rem', text: `${FA.reward}: ${formatNumber(result.reward / 1_000_000)} م` }),
-      panel.lastElementChild,
-    );
-  }
   overlay.appendChild(panel);
   return overlay;
 }

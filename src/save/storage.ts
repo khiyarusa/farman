@@ -34,6 +34,10 @@ export class SaveStore {
     this.storage = storage;
     this.persistent = storage === (typeof localStorage !== 'undefined' ? localStorage : null);
     this.data = this.read();
+    // Persist the initial save immediately so settings/progress survive a reload
+    // even if the player never changes anything.
+    this.dirty = true;
+    this.flush();
   }
 
   get current(): SaveData {
