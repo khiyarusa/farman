@@ -1,0 +1,45 @@
+{
+  "name": "farman",
+  "private": true,
+  "version": "0.1.0",
+  "description": "FARMAN (ÙØ±Ù…Ø§Ù†) â€” Persian-first, offline-first Android driving simulation. Every vehicle behaves differently.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite --port 5188 --strictPort",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "assets": "python tools/assetgen/build_all.py",
+    "shots": "node tools/qa/capture.mjs",
+    "cap:sync": "npx cap sync android",
+    "android:add": "npx cap add android"
+  },
+  "dependencies": {
+    "@babylonjs/core": "8.56.2",
+    "@babylonjs/loaders": "8.56.2",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "8.6.0",
+    "@dimforge/rapier3d-compat": "0.21.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/cli": "8.6.0",
+    "@eslint/js": "9.39.5",
+    "@types/node": "24.10.1",
+    "eslint": "9.39.5",
+    "jsdom": "31.0.0",
+    "playwright": "1.65.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.2",
+    "vazirmatn": "33.0.3",
+    "vite": "7.3.8",
+    "vitest": "3.2.7"
+  }
+}

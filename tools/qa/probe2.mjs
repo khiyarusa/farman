@@ -1,0 +1,26 @@
+﻿import RAPIER from "@dimforge/rapier3d-compat";
+await RAPIER.init();
+const world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
+world.timestep = 1/60;
+const ground = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(0,-1,0));
+world.createCollider(RAPIER.ColliderDesc.cuboid(200,1,200), ground);
+const body = world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(0,0.18,0).setCanSleep(false));
+world.createCollider(RAPIER.ColliderDesc.cuboid(0.77,0.317,1.92).setTranslation(0,0.605,0).setMassProperties(895,{x:0,y:-0.085,z:0},{x:1300,y:1250,z:350},{x:0,y:0,z:0,w:1}), body);
+const v = world.createVehicleController(body);
+v.addWheel({x:-0.695,y:0.3745,z:1.171},{x:0,y:-1,z:0},{x:1,y:0,z:0},0.2,0.286);
+v.addWheel({x:0.695,y:0.3745,z:1.171},{x:0,y:-1,z:0},{x:1,y:0,z:0},0.2,0.286);
+v.setWheelSuspensionStiffness(0, 26.8); v.setWheelSuspensionStiffness(1, 26.8);
+v.setWheelSuspensionCompression(0, 2.35); v.setWheelSuspensionCompression(1, 2.35);
+v.setWheelSuspensionRelaxation(0, 2.35); v.setWheelSuspensionRelaxation(1, 2.35);
+v.setWheelMaxSuspensionTravel(0, 0.17); v.setWheelMaxSuspensionTravel(1, 0.17);
+v.setWheelMaxSuspensionForce(0, 19300); v.setWheelMaxSuspensionForce(1, 19300);
+v.setWheelFrictionSlip(0, 1); v.setWheelFrictionSlip(1, 1);
+for (let i=0;i<300;i++){ v.updateVehicle(1/60); world.step(); }
+const t = body.translation();
+console.log("body", t);
+console.log("conn", v.wheelChassisConnectionPointCs(0));
+console.log("suspLen", v.wheelSuspensionLength(0));
+console.log("contactPoint", v.wheelContactPoint(0));
+console.log("rotation", v.wheelRotation(0));
+console.log("fz", v.wheelSuspensionForce(0));
+world.free();
