@@ -56,7 +56,7 @@ visible in the repository.
 | Economy loop | Credits are earned by missions; refuel/repair/service/paint/rims spend them | Driving never writes fuel, wear, damage or odometer back to the save, so the garage always shows pre-drive state; repairs are cosmetic | `src/app.ts` `disposeDrive`, `src/vehicles/vehicle.ts` |
 | Progression | XP accumulates (`score × 2`) | `player.level` never changes; `totalKm` and `sinceServiceKm` are never incremented | `src/app.ts` `persistMission` |
 | Settings | Graphics, render scale, UI scale, digits, assists, steering mode and handedness take effect | `steeringSensitivity`, `controlSize`, `controlOpacity` are persisted and never applied; volume sliders have no consumer | `src/ui/screens/settings.ts`, `src/ui/design.css` |
-| Audio | `profile.audio` metadata exists (firing Hz, timbre, gains); four volume settings persist | No audio module, no playback, no files | — |
+| Audio | `src/audio/audio.ts` — Web Audio synth (engine firing-frequency oscillators, tyre and wind noise, rain bed, UI blips) driven by telemetry | No sampled recordings, no music | Verified in browser, not on device |
 | Damage | Scalar `bodyDamage` rises on impacts, affects nothing visually and costs money to repair | No deformation, no panel/glass damage, no performance penalty | `src/vehicles/vehicle.ts` |
 | Weather | Dry/rain presets change fog, clear colour and grip | Rain is only reachable through the `wet` mission; no free-drive weather selector, no rain VFX, no wipers | `src/app.ts` `startDrive` |
 | Traffic | Lane following, headway, player braking, collisions | No traffic lights, stop signs, lane changes or priority; cars wrap around at road ends; O(n²) headway scan | `src/traffic/traffic.ts` |
@@ -69,7 +69,7 @@ visible in the repository.
 
 - Cockpit interior and cockpit camera (`visual.cockpitEye` is authored in all three profiles
   and never read; the "hood" camera is a bonnet view).
-- Audio of any kind (engine, tyres, wind, UI, music).
+- Music and sampled (recorded) engine audio.
 - Traffic-light or right-of-way logic; pedestrians; police; checkpoints.
 - Mesh deformation or detachable damage parts.
 - Day/night cycle or headlight cones (`sky-dusk.png` is unused).
@@ -123,7 +123,7 @@ visible in the repository.
 5. **Wire the inert settings (D8).** Apply `--control-scale` from `controlSize`, an opacity
    variable from `controlOpacity`, and multiply steering authority by
    `steeringSensitivity`. Acceptance: moving each slider visibly changes the control layer.
-6. **Audio.** New `src/audio/` with an engine synth driven by `rpm`, `throttle`,
+6. ~~**Audio.**~~ Done: `src/audio/audio.ts` is an engine synth driven by `rpm`, `throttle`,
    `profile.audio` (firing Hz, timbre, gains), tyre slip noise, wind, UI clicks; respect the
    four volume settings and pause with the game. Acceptance: no clipping at redline, mute
    works, audio stops on background.

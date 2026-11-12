@@ -87,7 +87,7 @@ optional side content, never a gate.
 | Camera | chase, close, hood | `src/rendering/cameraRig.ts` |
 | HUD | speed, tach, gear, fuel, coolant, ABS/TCS/ESC flags, minimap, objective | `src/ui/screens/hud.ts` |
 | Save | versioned localStorage save with validation, backup, debounce | `src/save/` |
-| Settings | quality, render scale, steering mode, handedness, UI scale, assists, digits, telemetry, tutorial hints; 4 volumes persist (no audio yet). Sensitivity/size/opacity are stored but not applied — see §14 | `src/ui/screens/settings.ts` |
+| Settings | quality, render scale, steering mode, handedness, UI scale, assists, digits, telemetry, tutorial hints; 4 volume buses wired to the synth. Sensitivity/size/opacity are stored but not applied — see §14 | `src/ui/screens/settings.ts` |
 | Onboarding | one-shot manual/automatic tutorial overlay, help screen | `src/ui/screens/overlays.ts` |
 
 ### 5.2 Explicitly NOT implemented in V1
@@ -99,7 +99,7 @@ optional side content, never a gate.
 | Cockpit interior for all cars | Three cameras only: chase, close, hood. `visual.cockpitEye` is authored in every profile but **never read**; there is no interior mesh. |
 | Damage deformation | `bodyDamage` is a single 0–1 scalar. No mesh deformation, no detached panels, no broken glass. |
 | Traffic-light logic | None. Intersections are unmanaged; traffic AI has no signals, stops, or right-of-way. |
-| Audio playback | No audio engine. Volume sliders persist values that nothing consumes; `profile.audio` is metadata only. |
+| Audio playback | Procedural Web Audio engine (`src/audio/audio.ts`): engine firing-frequency oscillators with load filter, tyre slip noise, wind, rain and UI blips. No music, no recorded samples. |
 | Pedestrians, police, checkpoints | Not modelled. |
 | Day/night cycle | Fixed daylight sky, two weather presets. |
 | Wear/fuel persistence from driving | Fuel burn, tyre wear, engine wear and body damage are simulated **inside a drive** but are not written back to the save on exit (`App.disposeDrive`), so the garage always shows pre-drive values. |
@@ -270,7 +270,7 @@ forest village) and built entirely from procedural generators — see `ART_BIBLE
    odometer are per-drive only; `disposeDrive` drops them. Until write-back exists, refuel
    and repair are cosmetic.
 2. **Level is inert.** XP accumulates, level never changes.
-3. **No audio.** Settings expose four volume sliders; nothing plays.
+3. **No recorded audio or music.** Everything audible is synthesised at runtime.
 4. **No cockpit.** The hood camera is the closest view; interiors would need meshes.
 5. **Traffic has no rules.** No lights, stop signs, or priority; cars brake for the player
    and for headway only.

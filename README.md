@@ -27,7 +27,7 @@ CVT ratio behaviour are modelled separately.
 | UI | **Persian RTL** throughout (`lang="fa" dir="rtl"`), bundled Vazirmatn, Persian digits and separators |
 | Saves | **Local only** — versioned JSON in `localStorage`, validated and repaired on load |
 | Android | Capacitor 8.6 shell, `minSdk 24`, `targetSdk 36`, landscape; the **debug APK is assembled by CI** |
-| Audio | Not implemented in this slice — volume settings persist, but nothing plays |
+| Audio | Procedural Web Audio: per-vehicle engine note from firing frequency + load, tyre slip noise, wind, rain, UI clicks; four volume buses wired to settings |
 
 This is a vertical slice, not a store release. The full scope and the explicit non-goals are
 in [`GDD.md`](GDD.md) §5; architecture and known limits are in [`TDD.md`](TDD.md).
@@ -345,8 +345,8 @@ Candid list for this slice — these are shipped behaviour, not a wish list.
 - **Drive state is not written back.** Fuel burn, tyre wear, engine wear, damage and odometer
   are simulated during a drive but are not persisted when you leave it; the garage shows
   pre-drive values. Refuel and repair are therefore mostly cosmetic in this slice.
-- **No audio playback.** Four volume sliders persist values that nothing consumes;
-  `profile.audio` is metadata only.
+- **Audio is synthesised, not recorded.** Convincing, continuous and load-reactive,
+  but it is a synth rather than a sampled engine, and there is no music.
 - **Three settings are inert.** Steering sensitivity, control size and control opacity are
   stored and persist, but the control layer does not consume them yet.
 - **Keyboard left steering is dead** (QA/desktop only; touch is unaffected) — see the controls

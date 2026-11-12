@@ -23,6 +23,7 @@ import { confirmOverlay, helpScreen, pauseOverlay, resultsOverlay, tutorialOverl
 import { getMission, type MissionDef } from './missions/definitions';
 import { MissionManager, type MissionResult } from './missions/manager';
 import { TrafficSystem } from './traffic/traffic';
+import { AudioEngine } from './audio/audio';
 import { FA } from './ui/i18n';
 import { el } from './ui/dom';
 import { formatNumber, setDigitMode } from './ui/format';
@@ -38,6 +39,7 @@ export class App {
   readonly saveStore: SaveStore;
   readonly renderer: Renderer;
   readonly version = APP.version;
+  readonly audio = new AudioEngine();
   isNative = false;
 
   private physics: PhysicsWorld;
@@ -69,6 +71,20 @@ export class App {
     this.physics = null as unknown as PhysicsWorld;
     this.applyUiScale();
     this.lastFrame = performance.now();
+    const startAudio = (): void => {
+      void this.audio.start().then(() => {
+        const s = this.save.settings;
+        this.audio.setVolumes(s.masterVolume, s.engineVolume, s.ambienceVolume, s.uiVolume);
+      });
+      window.removeEventListener('pointerdown', startAudio);
+      window.removeEventListener('keydown', startAudio);
+    };
+    window.addEventListener('pointerdown', startAudio);
+    window.addEventListener('keydown', startAudio);
+    this.ui.root.addEventListener('click', (ev) => {
+      const target = ev.target as HTMLElement | null;
+      if (target && target.closest('button')) this.audio.ui('click');
+    });
     const persist = (): void => this.saveStore.flush();
     window.addEventListener('pagehide', persist);
     document.addEventListener('visibilitychange', () => {
@@ -236,6 +252,10 @@ export class App {
     });
     if (key === 'digits') setDigitMode(value as 'fa' | 'latin');
     if (key === 'uiScale') this.applyUiScale();
+    const st = this.save.settings;
+    if (key === 'masterVolume' || key === 'engineVolume' || key === 'ambienceVolume' || key === 'uiVolume') {
+      this.audio.setVolumes(st.masterVolume, st.engineVolume, st.ambienceVolume, st.uiVolume);
+    }
     if (key === 'graphics' || key === 'renderScale') this.renderer.applySettings(this.save.settings);
     this.refreshScreen();
   }
@@ -429,6 +449,13 @@ export class App {
     }
 
     this.processKeyboardActions();
+    this.audio.update(
+      vehicle.telemetry,
+      this.selectedProfile.audio.firingHzAt1000,
+      vehicle.telemetry.groundSurface,
+      this.mission?.weather === 'rain',
+      this.paused,
+    );
     world.update(vehicle, dt);
     this.hud?.update(vehicle.telemetry, now);
     if (this.hud) {
@@ -566,6 +593,7 @@ export class App {
     this.missionRunner = null;
     this.mission = null;
     this.missionEndTimer = 0;
+    this.audio.silence();
     this.ui.closeOverlay();
   }
 

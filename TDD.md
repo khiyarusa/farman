@@ -48,7 +48,7 @@ relative to the repository root. Numbers below were read from source, not estima
 | `src/app.ts` | Orchestrator: screens, drive lifecycle, economy, settings | Owns the loop |
 | `src/main.ts` | Boot, WebGL2 probe, fatal error UI, `window.__farman` | QA handle |
 
-There is **no `src/audio` and no `src/platform`**. Capacitor detection is inline
+Audio lives in `src/audio/audio.ts` (Web Audio synthesis); there is **no `src/platform`**. Capacitor detection is inline
 (`App.tryDetectNative`); nothing plays sound. `src/rendering` and `src/traffic` are the only
 layers that import Babylon; `src/vehicles` and `src/missions` import Rapier only as types
 through `src/physics/world.ts`.
